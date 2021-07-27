@@ -1,0 +1,565 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1">
+      <UniqueIdentifier>{23c4a2c6-d80d-4556-83c1-93db82738570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\bin">
+      <UniqueIdentifier>{a148eb22-579a-4b45-afb2-4cb910b3bd57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include">
+      <UniqueIdentifier>{db2a2860-3b4a-43f2-a078-6c2dce15767d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\lib">
+      <UniqueIdentifier>{aa652cfb-f5e8-41d7-8702-f241f8230f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML">
+      <UniqueIdentifier>{0e0e9d38-8385-4b6b-b3f9-3ff72cf8e63e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML\Audio">
+      <UniqueIdentifier>{7e931dd8-cba0-4855-90ca-08c731412726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML\Graphics">
+      <UniqueIdentifier>{e2592750-916b-41d4-8cb4-2581d87c781b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML\Network">
+      <UniqueIdentifier>{55fb3cc5-68fd-440c-a3af-1b0cf0f27ca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML\System">
+      <UniqueIdentifier>{f55fb5dd-5869-41de-aa16-05af3e935033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\include\SFML\Window">
+      <UniqueIdentifier>{f12cd104-290b-4bd9-88a0-7d165ec4dac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\lib\cmake">
+      <UniqueIdentifier>{0a9a5139-f258-4fea-a9db-d1bbeac6fa4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\SFML-2.5.1\lib\cmake\SFML">
+      <UniqueIdentifier>{ee4c43de-6cb7-41cb-90dd-3be1fa2d4394}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SFML-2.5.1\bin\openal32.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-audio-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-audio-d-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-graphics-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-graphics-d-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-network-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-network-d-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-system-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-system-d-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-window-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\bin\sfml-window-d-2.dll">
+      <Filter>Resource Files\SFML-2.5.1\bin</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\Audio\SoundFileFactory.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\Graphics\Glsl.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\Graphics\Rect.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\String.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\Thread.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\ThreadLocalPtr.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\Utf.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\Vector2.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\include\SFML\System\Vector3.inl">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLConfig.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLConfigDependencies.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLConfigVersion.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLSharedTargets.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLSharedTargets-debug.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLSharedTargets-release.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLStaticTargets.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLStaticTargets-debug.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\cmake\SFML\SFMLStaticTargets-release.cmake">
+      <Filter>Resource Files\SFML-2.5.1\lib\cmake\SFML</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-graphics-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-graphics-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-main-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-network-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-network-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-system-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-system-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-window-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-window-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-audio-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+    <None Include="SFML-2.5.1\lib\sfml-audio-s-d.pdb">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Config.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\GpuPreference.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Main.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\OpenGL.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\AlResource.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\Export.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\InputSoundFile.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\Listener.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\Music.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\OutputSoundFile.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\Sound.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundBuffer.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundBufferRecorder.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundFileFactory.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundFileReader.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundFileWriter.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundRecorder.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundSource.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Audio\SoundStream.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\BlendMode.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\CircleShape.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Color.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\ConvexShape.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Drawable.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Export.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Font.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Glsl.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Glyph.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Image.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\PrimitiveType.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Rect.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\RectangleShape.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\RenderStates.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\RenderTarget.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\RenderTexture.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\RenderWindow.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Shader.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Shape.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Sprite.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Text.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Texture.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Transform.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Transformable.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\Vertex.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\VertexArray.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\VertexBuffer.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Graphics\View.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\Export.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\Ftp.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\Http.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\IpAddress.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\Packet.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\Socket.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\SocketHandle.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\SocketSelector.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\TcpListener.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\TcpSocket.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Network\UdpSocket.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Clock.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Err.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Export.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\FileInputStream.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\InputStream.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Lock.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\MemoryInputStream.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Mutex.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\NativeActivity.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\NonCopyable.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Sleep.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\String.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Thread.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\ThreadLocal.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\ThreadLocalPtr.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Time.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Utf.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Vector2.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\System\Vector3.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Clipboard.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Context.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\ContextSettings.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Cursor.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Event.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Export.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\GlResource.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Joystick.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Keyboard.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Mouse.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Sensor.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Touch.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\VideoMode.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\Window.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\WindowHandle.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1\include\SFML\Window\WindowStyle.hpp">
+      <Filter>Resource Files\SFML-2.5.1\include\SFML\Window</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="SFML-2.5.1\lib\sfml-graphics.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-graphics-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-graphics-s.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-graphics-s-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-main.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-main-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-network.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-network-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-network-s.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-network-s-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-system.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-system-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-system-s.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-system-s-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-window.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-window-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-window-s.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-window-s-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\vorbis.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\vorbisenc.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\vorbisfile.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\flac.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\freetype.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\ogg.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\openal32.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-audio.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-audio-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-audio-s.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+    <Library Include="SFML-2.5.1\lib\sfml-audio-s-d.lib">
+      <Filter>Resource Files\SFML-2.5.1\lib</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
