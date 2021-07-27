@@ -3,8 +3,21 @@
 #include <SFML/Audio.hpp>
 #include <Windows.h>
 
+#include "CVector.h"
+
 int FixedUpdate();
 void Draw();
+
+void TestLagrange();
+
+void TestPlanePoint();
+
+float GetDirtyFloat(std::string msg);
+#define dfx GetDirtyFloat("float x: ")
+#define dfy GetDirtyFloat("float y: ")
+#define dfz GetDirtyFloat("float z: ")
+
+Vector3 GetDirtyVec3(std::string msg);
 
 class CGame {
 public:
@@ -32,6 +45,9 @@ int main() {
 	test->setSize(sf::Vector2f(10, 10));
 
 	game.toDraw.push_back(test);
+
+	//TestLagrange();
+	TestPlanePoint();
 
 	while (window.isOpen() == true)
 	{
@@ -104,3 +120,68 @@ void Draw() {
 	//Update main window
 	game.wind->display();
 }
+
+void TestLagrange() {
+	Vector3 a = GetDirtyVec3("Enter vec A");
+
+	Vector3 b = GetDirtyVec3("Enter vec B");
+
+	Vector3 c = GetDirtyVec3("Enter vec C");
+
+	Vector3 LHS = Vector3::Cross(a, Vector3::Cross(b, c));
+	Vector3 RHS = b * Vector3::Dot(a, c) - c * Vector3::Dot(a, b);
+	float diff = Vector3::Diff(LHS, RHS);
+
+	std::cout << "A: " << a.ToString() << std::endl;
+	std::cout << "B: " << b.ToString() << std::endl;
+	std::cout << "C: " << c.ToString() << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "LHS: " << LHS.ToString() << std::endl;
+	std::cout << "RHS: " << RHS.ToString() << std::endl;
+	std::cout << "Diff: " << diff << std::endl;
+	std::cout << (diff <= 0.001 ? "They are Equal." : "They are NOT Equal.") << std::endl;
+
+	system("Pause");
+}
+
+void TestPlanePoint() {
+	Vector3 k = GetDirtyVec3("Enter Point on Plane");
+
+	Vector3 n = GetDirtyVec3("Enter Plane Normal");
+
+	Vector3 u = GetDirtyVec3("Enter Point to Test");
+
+	float dot = Vector3::Dot(u - k, n);
+
+	std::cout << "Dot: " << dot;
+
+	std::cout << std::endl;
+
+	std::cout << (dot == 0.0f ? "The Point lies on the Plane." : "They Point does NOT lie on the Plane, " + (std::string)(dot > 0.0f ? "it is infront." : "it is hehind.")) << std::endl;
+
+	system("Pause");
+}
+
+float GetDirtyFloat(std::string msg) {
+	std::cout << msg;
+
+	float _f;
+	std::cin >> _f;
+
+	return _f;
+}
+
+Vector3 GetDirtyVec3(std::string msg) {
+	std::cout << msg << std::endl;
+	float x = dfx;
+	float y = dfy;
+	float z = dfz;
+	return Vector3(x, y, z);
+}
+
+//float InputFloat(std::string msg, float min, float max) {
+//	float i = -INFINITY;
+//
+//
+//}
