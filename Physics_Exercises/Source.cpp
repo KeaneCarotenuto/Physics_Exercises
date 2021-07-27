@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Windows.h>
+#include <iomanip>
 
 #include "CVector.h"
 
@@ -9,15 +10,11 @@ int FixedUpdate();
 void Draw();
 
 void TestLagrange();
-
 void TestPlanePoint();
+void TestPlaneLine();
 
-float GetDirtyFloat(std::string msg);
-#define dfx GetDirtyFloat("float x: ")
-#define dfy GetDirtyFloat("float y: ")
-#define dfz GetDirtyFloat("float z: ")
-
-Vector3 GetDirtyVec3(std::string msg);
+double InputDouble(std::string msg);
+Vector3 InputVec3(std::string msg);
 
 class CGame {
 public:
@@ -32,12 +29,12 @@ int main() {
 	game.wind = &window;
 
 	//Manages the FixedUpdate() timing
-	float stepTime = 0;
+	double stepTime = 0;
 	bool drawn = false;
 	sf::Clock clock;
 
 	//FixedUpdate() call rate
-	float step = (1.0f / 60.0f);
+	double step = (1.0f / 60.0f);
 
 	sf::RectangleShape* test = new sf::RectangleShape();
 	test->setPosition(sf::Vector2f(10, 10));
@@ -45,9 +42,6 @@ int main() {
 	test->setSize(sf::Vector2f(10, 10));
 
 	game.toDraw.push_back(test);
-
-	//TestLagrange();
-	TestPlanePoint();
 
 	while (window.isOpen() == true)
 	{
@@ -84,6 +78,23 @@ int main() {
 			{
 				window.close();
 			}
+
+			if (newEvent.type == sf::Event::KeyPressed)
+			{
+				if (newEvent.key.code == sf::Keyboard::Num1) {
+					TestLagrange();
+				}
+
+				if (newEvent.key.code == sf::Keyboard::Num2) {
+					TestPlanePoint();
+				}
+				
+				if (newEvent.key.code == sf::Keyboard::Num3) {
+					TestPlaneLine();
+				}
+			}
+
+			
 		}
 	}
 
@@ -122,15 +133,21 @@ void Draw() {
 }
 
 void TestLagrange() {
-	Vector3 a = GetDirtyVec3("Enter vec A");
+	system("CLS");
+	std::cout << "-Lagrange's Formula-" << std::endl << std::endl;
 
-	Vector3 b = GetDirtyVec3("Enter vec B");
+	Vector3 a = InputVec3("Enter vec A");
+	std::cout << std::endl;
 
-	Vector3 c = GetDirtyVec3("Enter vec C");
+	Vector3 b = InputVec3("Enter vec B");
+	std::cout << std::endl;
+
+	Vector3 c = InputVec3("Enter vec C");
+	std::cout << std::endl;
 
 	Vector3 LHS = Vector3::Cross(a, Vector3::Cross(b, c));
 	Vector3 RHS = b * Vector3::Dot(a, c) - c * Vector3::Dot(a, b);
-	float diff = Vector3::Diff(LHS, RHS);
+	double diff = Vector3::Diff(LHS, RHS);
 
 	std::cout << "A: " << a.ToString() << std::endl;
 	std::cout << "B: " << b.ToString() << std::endl;
@@ -146,42 +163,84 @@ void TestLagrange() {
 }
 
 void TestPlanePoint() {
-	Vector3 k = GetDirtyVec3("Enter Point on Plane");
+	system("CLS");
+	std::cout << "-Plane vs Point Function-" << std::endl << std::endl;
 
-	Vector3 n = GetDirtyVec3("Enter Plane Normal");
+	Vector3 k = InputVec3("Enter Point on Plane (k)");
+	std::cout << std::endl;
 
-	Vector3 u = GetDirtyVec3("Enter Point to Test");
+	Vector3 n = InputVec3("Enter Plane Normal (n)");
+	std::cout << std::endl;
 
-	float dot = Vector3::Dot(u - k, n);
+	Vector3 p = InputVec3("Enter Point to Test (p)");
+	std::cout << std::endl;
+
+	double dot = Vector3::Dot(p - k, n);
 
 	std::cout << "Dot: " << dot;
 
 	std::cout << std::endl;
 
-	std::cout << (dot == 0.0f ? "The Point lies on the Plane." : "They Point does NOT lie on the Plane, " + (std::string)(dot > 0.0f ? "it is infront." : "it is hehind.")) << std::endl;
+	std::cout << (Vector3::IsPointOnPlane(p, k, n) ? "The Point lies on the Plane." : "They Point does NOT lie on the Plane, " + (std::string)(dot > 0.0f ? "it is infront." : "it is hehind.")) << std::endl;
 
 	system("Pause");
 }
 
-float GetDirtyFloat(std::string msg) {
-	std::cout << msg;
+void TestPlaneLine() {
+	system("CLS");
+	std::cout << "-Line Intersect Plane-" << std::endl << std::endl;
 
-	float _f;
-	std::cin >> _f;
+	Vector3 pp = InputVec3("Enter Point on Plane (k)");
+	std::cout << std::endl;
 
-	return _f;
+	Vector3 pn = InputVec3("Enter Plane Normal (n)");
+	std::cout << std::endl;
+
+	Vector3 lpa = InputVec3("Enter line point (a)");
+	std::cout << std::endl;
+
+	Vector3 lpb = InputVec3("Enter line point (b)");
+	std::cout << std::endl;
+
+	bool doesInt = false;
+	Vector3 intersectPoint = Vector3::LineIntersectPlanePoint(pp, pn, lpa, lpb, &doesInt);
+
+	std::cout << (doesInt ? "The Line intersects the Plane at point I: " + intersectPoint.ToString() : "They Line does NOT intersect the Plane") << std::endl;
+
+	system("Pause");
 }
 
-Vector3 GetDirtyVec3(std::string msg) {
+double InputDouble(std::string msg) {
+
+	std::cout << msg;
+	double _d;
+
+	bool notProper = true;
+	while (notProper) {
+		std::string input;
+		std::cin >> input;
+			if (input.find_first_not_of("1234567890.-") != std::string::npos) {
+				std::cout << "invalid number: " << input << std::endl;
+			}
+			else {
+				_d = stod(input);
+				notProper = false;
+			}
+	};
+
+	return _d;
+}
+
+Vector3 InputVec3(std::string msg) {
 	std::cout << msg << std::endl;
-	float x = dfx;
-	float y = dfy;
-	float z = dfz;
+	double x = InputDouble("double x: ");
+	double y = InputDouble("double y: ");
+	double z = InputDouble("double z: ");
 	return Vector3(x, y, z);
 }
 
-//float InputFloat(std::string msg, float min, float max) {
-//	float i = -INFINITY;
+//double Inputdouble(std::string msg, double min, double max) {
+//	double i = -INFINITY;
 //
 //
 //}

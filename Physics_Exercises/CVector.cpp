@@ -1,6 +1,6 @@
 #include "CVector.h"
 
-Vector3 Vector3::operator*(float _f)
+Vector3 Vector3::operator*(double _f)
 {
 	return Vector3(x * _f, y * _f, z * _f);
 }
