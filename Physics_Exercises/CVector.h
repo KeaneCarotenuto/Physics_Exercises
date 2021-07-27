@@ -102,4 +102,16 @@ public:
 		}
 	}
 
+	static bool TriangleIntersectsPlane(Vector3 pp, Vector3 pn, Vector3 ta, Vector3 tb, Vector3 tc) {
+		bool doesInt = false;
+		LineIntersectPlanePoint(pp, pn, ta, tb, &doesInt);
+		if (doesInt) return doesInt;
+		LineIntersectPlanePoint(pp, pn, tb, tc, &doesInt);
+		if (doesInt) return doesInt;
+		LineIntersectPlanePoint(pp, pn, tc, ta, &doesInt);
+		if (doesInt) return doesInt;
+
+		return false;
+	}
+
 };

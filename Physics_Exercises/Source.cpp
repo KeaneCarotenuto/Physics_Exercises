@@ -12,6 +12,7 @@ void Draw();
 void TestLagrange();
 void TestPlanePoint();
 void TestPlaneLine();
+void TestPlaneTriangle();
 
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
@@ -92,6 +93,10 @@ int main() {
 				if (newEvent.key.code == sf::Keyboard::Num3) {
 					TestPlaneLine();
 				}
+				
+				if (newEvent.key.code == sf::Keyboard::Num4) {
+					TestPlaneTriangle();
+				}
 			}
 
 			
@@ -158,8 +163,6 @@ void TestLagrange() {
 	std::cout << "RHS: " << RHS.ToString() << std::endl;
 	std::cout << "Diff: " << diff << std::endl;
 	std::cout << (diff <= 0.001 ? "They are Equal." : "They are NOT Equal.") << std::endl;
-
-	system("Pause");
 }
 
 void TestPlanePoint() {
@@ -182,13 +185,11 @@ void TestPlanePoint() {
 	std::cout << std::endl;
 
 	std::cout << (Vector3::IsPointOnPlane(p, k, n) ? "The Point lies on the Plane." : "They Point does NOT lie on the Plane, " + (std::string)(dot > 0.0f ? "it is infront." : "it is hehind.")) << std::endl;
-
-	system("Pause");
 }
 
 void TestPlaneLine() {
 	system("CLS");
-	std::cout << "-Line Intersect Plane-" << std::endl << std::endl;
+	std::cout << "-Line Segment vs Plane Function-" << std::endl << std::endl;
 
 	Vector3 pp = InputVec3("Enter Point on Plane (k)");
 	std::cout << std::endl;
@@ -196,18 +197,40 @@ void TestPlaneLine() {
 	Vector3 pn = InputVec3("Enter Plane Normal (n)");
 	std::cout << std::endl;
 
-	Vector3 lpa = InputVec3("Enter line point (a)");
+	Vector3 lpa = InputVec3("Enter Line point (a)");
 	std::cout << std::endl;
 
-	Vector3 lpb = InputVec3("Enter line point (b)");
+	Vector3 lpb = InputVec3("Enter Line point (b)");
 	std::cout << std::endl;
 
 	bool doesInt = false;
 	Vector3 intersectPoint = Vector3::LineIntersectPlanePoint(pp, pn, lpa, lpb, &doesInt);
 
 	std::cout << (doesInt ? "The Line intersects the Plane at point I: " + intersectPoint.ToString() : "They Line does NOT intersect the Plane") << std::endl;
+}
 
-	system("Pause");
+void TestPlaneTriangle() {
+	system("CLS");
+	std::cout << "-Triangle vs Plane Function-" << std::endl << std::endl;
+
+	Vector3 pp = InputVec3("Enter Point on Plane (k)");
+	std::cout << std::endl;
+
+	Vector3 pn = InputVec3("Enter Plane Normal (n)");
+	std::cout << std::endl;
+
+	Vector3 ta = InputVec3("Enter Triangle point (a)");
+	std::cout << std::endl;
+
+	Vector3 tb = InputVec3("Enter Triangle point (b)");
+	std::cout << std::endl;
+
+	Vector3 tc = InputVec3("Enter Triangle point (c)");
+	std::cout << std::endl;
+
+	bool doesInt = Vector3::TriangleIntersectsPlane(pp, pn, ta, tb, tc);
+
+	std::cout << (doesInt ? "The Triangle intersects the Plane.": "The Triangle does NOT intersect the Plane.") << std::endl;
 }
 
 double InputDouble(std::string msg) {
