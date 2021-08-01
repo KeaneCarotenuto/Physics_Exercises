@@ -166,6 +166,8 @@ public:
 			double x = (b2 * c1 - b1 * c2) / determinant;
 			double y = (a1 * c2 - a2 * c1) / determinant;
 
+			//SOMETHING HERE NOT WORKING????????
+
 			if (std::min(A.x, B.x) <= x && x <= std::max(A.x, B.x) &&
 				std::min(A.y, B.y) <= y && y <= std::max(A.y, B.y)) {
 				return { x, y, 0 };
