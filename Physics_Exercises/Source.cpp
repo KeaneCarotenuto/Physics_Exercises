@@ -140,16 +140,16 @@ int FixedUpdate() {
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
 		makeLine = true;
 
-		line.a = Vector3::Zero();
-		line.b = Vector3::Zero();
+		line.a = Vector3::Infinity();
+		line.b = Vector3::Infinity();
 	}
 
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
 		makeTri = true;
 
-		triangle.a = Vector3::Zero();
-		triangle.b = Vector3::Zero();
-		triangle.c = Vector3::Zero();
+		triangle.a = Vector3::Infinity();
+		triangle.b = Vector3::Infinity();
+		triangle.c = Vector3::Infinity();
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -159,10 +159,10 @@ int FixedUpdate() {
 			freezeMouse = true;
 
 			if (makeLine) {
-				if (line.a == Vector3::Zero()) {
+				if (line.a == Vector3::Infinity()) {
 					line.a = (Vector3)pos;
 				}
-				else if (line.b == Vector3::Zero()) {
+				else if (line.b == Vector3::Infinity()) {
 					line.b = (Vector3)pos;
 					makeLine = false;
 				}
@@ -171,13 +171,13 @@ int FixedUpdate() {
 				}
 			} 
 			else if (makeTri) {
-				if (triangle.a == Vector3::Zero()) {
+				if (triangle.a == Vector3::Infinity()) {
 					triangle.a = (Vector3)pos;
 				}
-				else if (triangle.b == Vector3::Zero()) {
+				else if (triangle.b == Vector3::Infinity()) {
 					triangle.b = (Vector3)pos;
 				}
-				else if (triangle.c == Vector3::Zero()) {
+				else if (triangle.c == Vector3::Infinity()) {
 					triangle.c = (Vector3)pos;
 					makeTri = false;
 				}
@@ -211,7 +211,7 @@ void Draw() {
 		c.setOrigin(5.0f, 5.0f);
 		
 
-		if (line.a != Vector3::Zero()) {
+		if (line.a != Vector3::Infinity()) {
 			c.setPosition((sf::Vector2f)line.a);
 			game.wind->draw(c);
 		}
@@ -228,11 +228,11 @@ void Draw() {
 		c.setOrigin(5.0f, 5.0f);
 
 
-		if (triangle.a != Vector3::Zero()) {
+		if (triangle.a != Vector3::Infinity()) {
 			c.setPosition((sf::Vector2f)triangle.a);
 			game.wind->draw(c);
 		}
-		if (triangle.b != Vector3::Zero()) {
+		if (triangle.b != Vector3::Infinity()) {
 			c.setPosition((sf::Vector2f)triangle.b);
 			game.wind->draw(c);
 		}
@@ -257,14 +257,25 @@ void Draw() {
 		game.wind->draw(Tlines);
 	}
 
-	Vector3 intP = Vector3::LineIntersectsLine(line.a, line.b, triangle.a, triangle.b);
+	Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, triangle.a, triangle.b);
+	Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, triangle.b, triangle.c);
+	Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, triangle.c, triangle.a);
 
-	if (intP != Vector3::Infinity()) {
-		sf::CircleShape c;
-		c.setFillColor(sf::Color::White);
-		c.setRadius(5.0f);
-		c.setOrigin(5.0f, 5.0f);
-		c.setPosition((sf::Vector2f)intP);
+	sf::CircleShape c;
+	c.setFillColor(sf::Color::White);
+	c.setRadius(5.0f);
+	c.setOrigin(5.0f, 5.0f);
+
+	if (!intA.AnyInf() || !intA.AnyZero()) {
+		c.setPosition((sf::Vector2f)intA);
+		game.wind->draw(c);
+	}
+	if (!intB.AnyInf() || !intB.AnyZero()) {
+		c.setPosition((sf::Vector2f)intB);
+		game.wind->draw(c);
+	}
+	if (!intC.AnyInf() || !intC.AnyZero()) {
+		c.setPosition((sf::Vector2f)intC);
 		game.wind->draw(c);
 	}
 	

@@ -41,6 +41,16 @@ public:
 		return Vector3(x / mag, y / mag, z / mag);
 	}
 
+	bool AnyZero() {
+		if (x == 0 || y == 0 || z == 0) return true;
+		else return false;
+	}
+
+	bool AnyInf() {
+		if (x == INFINITY || y == INFINITY || z == INFINITY) return true;
+		else return false;
+	}
+
 	static Vector3 Zero() {
 		return { 0,0,0 };
 	}
