@@ -1,5 +1,7 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include <string>
+
 
 class CVector
 {
@@ -13,6 +15,12 @@ public:
 	Vector3 operator-(Vector3 _v);
 	Vector3 operator+(Vector3 _v);
 	bool operator==(Vector3 _v);
+	bool operator!=(Vector3 _v);
+
+	Vector3(const sf::Vector2i a) { x = a.x; y = a.y; z = 0; };
+	Vector3(const sf::Vector2f a) { x = a.x; y = a.y; z = 0; };
+
+	operator sf::Vector2f() const { return { (float)x, (float)y }; };
 
 	std::string ToString() {
 		return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ")";
@@ -31,6 +39,14 @@ public:
 	Vector3 Normalized() {
 		double mag = this->Mag();
 		return Vector3(x / mag, y / mag, z / mag);
+	}
+
+	static Vector3 Zero() {
+		return { 0,0,0 };
+	}
+
+	static Vector3 Infinity() {
+		return { INFINITY,INFINITY,INFINITY };
 	}
 
 	static Vector3 Cross(Vector3 a, Vector3 b) {
@@ -112,6 +128,44 @@ public:
 		if (doesInt) return doesInt;
 
 		return false;
+	}
+
+	//LITERALLY CHANGE THIS LMAO
+	static Vector3 LineIntersectsLine(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
+	{
+		// Line AB represented as a1x + b1y = c1
+		double a1 = B.y - A.y;
+		double b1 = A.x - B.x;
+		double c1 = a1 * (A.x) + b1 * (A.y);
+
+		// Line CD represented as a2x + b2y = c2
+		double a2 = D.y - C.y;
+		double b2 = C.x - D.x;
+		double c2 = a2 * (C.x) + b2 * (C.y);
+
+		double determinant = a1 * b2 - a2 * b1;
+
+		if (determinant == 0)
+		{
+			// The lines are parallel. This is simplified
+			// by returning a pair of FLT_MAX
+			return { INFINITY, INFINITY , INFINITY };
+		}
+		else
+		{
+			double x = (b2 * c1 - b1 * c2) / determinant;
+			double y = (a1 * c2 - a2 * c1) / determinant;
+
+			if (std::min(A.x, B.x) <= x && x <= std::max(A.x, B.x) &&
+				std::min(A.y, B.y) <= y && y <= std::max(A.y, B.y)) {
+				return { x, y, 0 };
+			}
+			else {
+				return { INFINITY, INFINITY , INFINITY };
+			}
+
+			
+		}
 	}
 
 };

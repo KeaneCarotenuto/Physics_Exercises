@@ -106,6 +106,21 @@ int main() {
 	return 0;
 }
 
+bool freezeMouse = false;
+
+bool makeLine = false;
+struct Line {
+	Vector3 a = Vector3::Zero();
+	Vector3 b = Vector3::Zero();
+}line;
+
+bool makeTri = false;
+struct Triangle {
+	Vector3 a = Vector3::Zero();
+	Vector3 b = Vector3::Zero();
+	Vector3 c = Vector3::Zero();
+}triangle;
+
 int FixedUpdate() {
 	sf::RectangleShape* theRect = dynamic_cast<sf::RectangleShape*>(game.toDraw[0]);
 
@@ -122,6 +137,61 @@ int FixedUpdate() {
 		theRect->setPosition(sf::Vector2f(theRect->getPosition().x, theRect->getPosition().y + 1));
 	}
 
+	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+		makeLine = true;
+
+		line.a = Vector3::Zero();
+		line.b = Vector3::Zero();
+	}
+
+	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+		makeTri = true;
+
+		triangle.a = Vector3::Zero();
+		triangle.b = Vector3::Zero();
+		triangle.c = Vector3::Zero();
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		sf::Vector2i pos = sf::Mouse::getPosition(*game.wind);
+
+		if (!freezeMouse) {
+			freezeMouse = true;
+
+			if (makeLine) {
+				if (line.a == Vector3::Zero()) {
+					line.a = (Vector3)pos;
+				}
+				else if (line.b == Vector3::Zero()) {
+					line.b = (Vector3)pos;
+					makeLine = false;
+				}
+				else {
+					makeLine = false;
+				}
+			} 
+			else if (makeTri) {
+				if (triangle.a == Vector3::Zero()) {
+					triangle.a = (Vector3)pos;
+				}
+				else if (triangle.b == Vector3::Zero()) {
+					triangle.b = (Vector3)pos;
+				}
+				else if (triangle.c == Vector3::Zero()) {
+					triangle.c = (Vector3)pos;
+					makeTri = false;
+				}
+				else {
+					makeTri = false;
+				}
+			}
+		}
+	}
+	else {
+		if (freezeMouse) freezeMouse = false;
+	}
+	
+
 	return 1;
 }
 
@@ -132,6 +202,72 @@ void Draw() {
 	{
 		game.wind->draw((*item));
 	}
+
+
+	if (makeLine) {
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::White);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+		
+
+		if (line.a != Vector3::Zero()) {
+			c.setPosition((sf::Vector2f)line.a);
+			game.wind->draw(c);
+		}
+
+		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
+		game.wind->draw(c);
+
+		
+	}
+	else if (makeTri) {
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::White);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+
+
+		if (triangle.a != Vector3::Zero()) {
+			c.setPosition((sf::Vector2f)triangle.a);
+			game.wind->draw(c);
+		}
+		if (triangle.b != Vector3::Zero()) {
+			c.setPosition((sf::Vector2f)triangle.b);
+			game.wind->draw(c);
+		}
+
+		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
+		game.wind->draw(c);
+	}
+	
+	if (!makeLine) {
+		sf::VertexArray Llines(sf::LinesStrip, 2);
+		Llines[0].position = (sf::Vector2f)line.a;
+		Llines[1].position = (sf::Vector2f)line.b;
+		game.wind->draw(Llines);
+	}
+
+	if (!makeTri) {
+		sf::VertexArray Tlines(sf::LinesStrip, 4);
+		Tlines[0].position = (sf::Vector2f)triangle.a;
+		Tlines[1].position = (sf::Vector2f)triangle.b;
+		Tlines[2].position = (sf::Vector2f)triangle.c;
+		Tlines[3].position = (sf::Vector2f)triangle.a;
+		game.wind->draw(Tlines);
+	}
+
+	Vector3 intP = Vector3::LineIntersectsLine(line.a, line.b, triangle.a, triangle.b);
+
+	if (intP != Vector3::Infinity()) {
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::White);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+		c.setPosition((sf::Vector2f)intP);
+		game.wind->draw(c);
+	}
+	
 
 	//Update main window
 	game.wind->display();

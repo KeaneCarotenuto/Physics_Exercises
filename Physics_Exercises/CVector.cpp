@@ -20,3 +20,8 @@ bool Vector3::operator==(Vector3 _v)
 	if (x == _v.x && y == _v.y && z == _v.z) return true;
 	else return false;
 }
+
+bool Vector3::operator!=(Vector3 _v)
+{
+	return !(_v == (*this));
+}
