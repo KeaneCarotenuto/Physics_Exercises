@@ -349,3 +349,7 @@ MigrationBackup/
 Star_Dodgers/Debug/
 
 Star_Dodgers/Release/
+
+*.tlog
+
+*.idb
