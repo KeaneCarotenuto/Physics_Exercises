@@ -6,8 +6,43 @@
 
 #include "CVector.h"
 
+struct Line {
+	Vector3 a = Vector3::Zero();
+	Vector3 b = Vector3::Zero();
+
+	bool IsValid() {
+		if (a.AnyInf()|| b.AnyInf()) return false;
+		else return true;
+	}
+}line;
+
+//std::vector<Line> lines;
+
+struct Triangle {
+	Vector3 a = Vector3::Zero();
+	Vector3 b = Vector3::Zero();
+	Vector3 c = Vector3::Zero();
+
+	sf::Color col = sf::Color::White;
+
+	bool IsValid() {
+		if (a.AnyInf() || b.AnyInf() || c.AnyInf()) return false;
+		else return true;
+	}
+};
+
+std::vector<Triangle*> tris = {new Triangle()};
+
 int FixedUpdate();
 void Draw();
+
+void DrawTriangle(Triangle _t);
+
+bool freezeMouse = false;
+
+bool makeLine = false;
+
+bool makeTri = false;
 
 void TestLagrange();
 void TestPlanePoint();
@@ -106,21 +141,6 @@ int main() {
 	return 0;
 }
 
-bool freezeMouse = false;
-
-bool makeLine = false;
-struct Line {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
-}line;
-
-bool makeTri = false;
-struct Triangle {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
-	Vector3 c = Vector3::Zero();
-}triangle;
-
 int FixedUpdate() {
 	sf::RectangleShape* theRect = dynamic_cast<sf::RectangleShape*>(game.toDraw[0]);
 
@@ -147,9 +167,135 @@ int FixedUpdate() {
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
 		makeTri = true;
 
-		triangle.a = Vector3::Infinity();
-		triangle.b = Vector3::Infinity();
-		triangle.c = Vector3::Infinity();
+		tris[0]->a = Vector3::Infinity();
+		tris[0]->b = Vector3::Infinity();
+		tris[0]->c = Vector3::Infinity();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+		if (makeLine) {
+			makeLine = false;
+
+			line.a = Vector3::Infinity();
+			line.b = Vector3::Infinity();
+		}
+
+		if (makeTri) {
+			makeTri = false;
+
+			tris[0]->a = Vector3::Infinity();
+			tris[0]->b = Vector3::Infinity();
+			tris[0]->c = Vector3::Infinity();
+		}
+	}
+
+	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+		std::vector<Triangle*> toAdd;
+
+		for (Triangle* _t : tris) {
+			if (!_t->IsValid()) continue;
+
+			Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, _t->a, _t->b);
+			Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, _t->b, _t->c);
+			Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, _t->c, _t->a);
+
+			int count = 0;
+			if (!intA.AnyInf()) count++;
+			if (!intB.AnyInf()) count++;
+			if (!intC.AnyInf()) count++;
+
+			if (count == 0 || count == 1) continue;
+
+			if (intA.AnyInf()) {
+				Triangle* t1 = new Triangle();
+				Triangle* t2 = new Triangle();
+				Triangle* t3 = new Triangle();
+
+				t1->c = _t->c;
+				t1->a = intC;
+				t1->b = intB;
+
+				t2->c = intC;
+				t2->a = _t->a;
+				t2->b = _t->b;
+
+				t3->c = intC;
+				t3->a = _t->b;
+				t3->b = intB;
+
+				toAdd.push_back(t1);
+				toAdd.push_back(t2);
+				toAdd.push_back(t3);
+
+				_t->c = Vector3::Infinity();
+				_t->a = Vector3::Infinity();
+				_t->b = Vector3::Infinity();
+			}
+
+			if (intB.AnyInf()) {
+
+				Triangle* t1 = new Triangle();
+				Triangle* t2 = new Triangle();
+				Triangle* t3 = new Triangle();
+
+				t1->a = _t->a;
+				t1->b = intA;
+				t1->c = intC;
+
+				t2->a = intA;
+				t2->b = _t->b;
+				t2->c = _t->c;
+
+				t3->a = intA;
+				t3->b = _t->c;
+				t3->c = intC;
+
+				toAdd.push_back(t1);
+				toAdd.push_back(t2);
+				toAdd.push_back(t3);
+
+				_t->a = Vector3::Infinity();
+				_t->b = Vector3::Infinity();
+				_t->c = Vector3::Infinity();
+			}
+
+			if (intC.AnyInf()) {
+				Triangle* t1 = new Triangle();
+				Triangle* t2 = new Triangle();
+				Triangle* t3 = new Triangle();
+
+				t1->b = _t->b;
+				t1->c = intB;
+				t1->a = intA;
+
+				t2->b = intB;
+				t2->c = _t->c;
+				t2->a = _t->a;
+
+				t3->b = intB;
+				t3->c = _t->a;
+				t3->a = intA;
+
+				toAdd.push_back(t1);
+				toAdd.push_back(t2);
+				toAdd.push_back(t3);
+
+				_t->b = Vector3::Infinity();
+				_t->c = Vector3::Infinity();
+				_t->a = Vector3::Infinity();
+			}
+		}
+
+		for (Triangle* _t : toAdd) {
+			_t->col = sf::Color::Color(rand() % 255, rand() % 255, rand() % 255);
+			tris.push_back(_t);
+		}
+
+		toAdd.clear();
+		
+
+		line.a = Vector3::Infinity();
+		line.b = Vector3::Infinity();
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -171,14 +317,14 @@ int FixedUpdate() {
 				}
 			} 
 			else if (makeTri) {
-				if (triangle.a == Vector3::Infinity()) {
-					triangle.a = (Vector3)pos;
+				if (tris[0]->a == Vector3::Infinity()) {
+					tris[0]->a = (Vector3)pos;
 				}
-				else if (triangle.b == Vector3::Infinity()) {
-					triangle.b = (Vector3)pos;
+				else if (tris[0]->b == Vector3::Infinity()) {
+					tris[0]->b = (Vector3)pos;
 				}
-				else if (triangle.c == Vector3::Infinity()) {
-					triangle.c = (Vector3)pos;
+				else if (tris[0]->c == Vector3::Infinity()) {
+					tris[0]->c = (Vector3)pos;
 					makeTri = false;
 				}
 				else {
@@ -203,10 +349,39 @@ void Draw() {
 		game.wind->draw((*item));
 	}
 
+	if (!makeTri) {
+		DrawTriangle(*tris[0]);
+	}
+
+	for (Triangle* _t : tris) {
+		DrawTriangle(*_t);
+
+		Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, _t->a, _t->b);
+		Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, _t->b, _t->c);
+		Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, _t->c, _t->a);
+
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::Red);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+
+		if (!intA.AnyInf()) {
+			c.setPosition((sf::Vector2f)intA);
+			game.wind->draw(c);
+		}
+		if (!intB.AnyInf()) {
+			c.setPosition((sf::Vector2f)intB);
+			game.wind->draw(c);
+		}
+		if (!intC.AnyInf()) {
+			c.setPosition((sf::Vector2f)intC);
+			game.wind->draw(c);
+		}
+	}
 
 	if (makeLine) {
 		sf::CircleShape c;
-		c.setFillColor(sf::Color::White);
+		c.setFillColor(sf::Color::Red);
 		c.setRadius(5.0f);
 		c.setOrigin(5.0f, 5.0f);
 		
@@ -218,70 +393,53 @@ void Draw() {
 
 		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
 		game.wind->draw(c);
-
-		
 	}
-	else if (makeTri) {
+	
+	if (makeTri) {
 		sf::CircleShape c;
-		c.setFillColor(sf::Color::White);
+		c.setFillColor(sf::Color::Red);
 		c.setRadius(5.0f);
 		c.setOrigin(5.0f, 5.0f);
 
 
-		if (triangle.a != Vector3::Infinity()) {
-			c.setPosition((sf::Vector2f)triangle.a);
+		if (tris[0]->a != Vector3::Infinity()) {
+			c.setPosition((sf::Vector2f)tris[0]->a);
 			game.wind->draw(c);
 		}
-		if (triangle.b != Vector3::Infinity()) {
-			c.setPosition((sf::Vector2f)triangle.b);
+		if (tris[0]->b != Vector3::Infinity()) {
+			c.setPosition((sf::Vector2f)tris[0]->b);
 			game.wind->draw(c);
 		}
 
 		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
 		game.wind->draw(c);
 	}
-	
+
 	if (!makeLine) {
 		sf::VertexArray Llines(sf::LinesStrip, 2);
 		Llines[0].position = (sf::Vector2f)line.a;
 		Llines[1].position = (sf::Vector2f)line.b;
+		Llines[0].color = sf::Color::Red;
+		Llines[1].color = sf::Color::Red;
 		game.wind->draw(Llines);
 	}
 
-	if (!makeTri) {
-		sf::VertexArray Tlines(sf::LinesStrip, 4);
-		Tlines[0].position = (sf::Vector2f)triangle.a;
-		Tlines[1].position = (sf::Vector2f)triangle.b;
-		Tlines[2].position = (sf::Vector2f)triangle.c;
-		Tlines[3].position = (sf::Vector2f)triangle.a;
-		game.wind->draw(Tlines);
-	}
-
-	Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, triangle.a, triangle.b);
-	Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, triangle.b, triangle.c);
-	Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, triangle.c, triangle.a);
-
-	sf::CircleShape c;
-	c.setFillColor(sf::Color::White);
-	c.setRadius(5.0f);
-	c.setOrigin(5.0f, 5.0f);
-
-	if (!intA.AnyInf() || !intA.AnyZero()) {
-		c.setPosition((sf::Vector2f)intA);
-		game.wind->draw(c);
-	}
-	if (!intB.AnyInf() || !intB.AnyZero()) {
-		c.setPosition((sf::Vector2f)intB);
-		game.wind->draw(c);
-	}
-	if (!intC.AnyInf() || !intC.AnyZero()) {
-		c.setPosition((sf::Vector2f)intC);
-		game.wind->draw(c);
-	}
-	
-
 	//Update main window
 	game.wind->display();
+}
+
+void DrawTriangle(Triangle _t)
+{
+	sf::VertexArray Tlines(sf::Triangles, 3);
+	Tlines[0].position = (sf::Vector2f)_t.a;
+	Tlines[1].position = (sf::Vector2f)_t.b;
+	Tlines[2].position = (sf::Vector2f)_t.c;
+
+	Tlines[0].color = _t.col;
+	Tlines[1].color = _t.col;
+	Tlines[2].color = _t.col;
+
+	game.wind->draw(Tlines);
 }
 
 void TestLagrange() {
