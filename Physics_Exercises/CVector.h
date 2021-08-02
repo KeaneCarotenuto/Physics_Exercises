@@ -140,40 +140,41 @@ public:
 		return false;
 	}
 
-	//LITERALLY CHANGE THIS LMAO
-	static Vector3 LineIntersectsLine(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
+	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2)
 	{
-		// Line AB represented as a1x + b1y = c1
-		double a1 = B.y - A.y;
-		double b1 = A.x - B.x;
-		double c1 = a1 * (A.x) + b1 * (A.y);
+		//convert line 1 from vector to equation Ax + By = C
+		double l1a = l1p2.y - l1p1.y;
+		double l1b = l1p1.x - l1p2.x;
+		double l1c = l1a * (l1p1.x) + l1b * (l1p1.y);
 
-		// Line CD represented as a2x + b2y = c2
-		double a2 = D.y - C.y;
-		double b2 = C.x - D.x;
-		double c2 = a2 * (C.x) + b2 * (C.y);
+		//convert line 2 from vector to equation Ax + By = C
+		double l2a = l2p2.y - l2p1.y;
+		double l2b = l2p1.x - l2p2.x;
+		double l3c = l2a * (l2p1.x) + l2b * (l2p1.y);
 
-		double determinant = a1 * b2 - a2 * b1;
+		//calc determinant to detect parallel
+		double determinant = l1a * l2b - l2a * l1b;
 
 		if (determinant == 0)
 		{
-			// The lines are parallel. This is simplified
-			// by returning a pair of FLT_MAX
-			return { INFINITY, INFINITY , INFINITY };
+			//If parallel return infinity
+			return Infinity();
 		}
 		else
 		{
-			double x = (b2 * c1 - b1 * c2) / determinant;
-			double y = (a1 * c2 - a2 * c1) / determinant;
+			double x = (l2b * l1c - l1b * l3c) / determinant;
+			double y = (l1a * l3c - l2a * l1c) / determinant;
 
-			if (std::min(A.x, B.x) <= x && x <= std::max(A.x, B.x) &&
-				std::min(A.y, B.y) <= y && y <= std::max(A.y, B.y) &&
-				std::min(C.x, D.x) <= x && x <= std::max(C.x, D.x) &&
-				std::min(C.y, D.y) <= y && y <= std::max(C.y, D.y))
+			//check if actually intersecting between points
+			if (std::min(l1p1.x, l1p2.x) <= x && x <= std::max(l1p1.x, l1p2.x) &&
+				std::min(l1p1.y, l1p2.y) <= y && y <= std::max(l1p1.y, l1p2.y) &&
+				std::min(l2p1.x, l2p2.x) <= x && x <= std::max(l2p1.x, l2p2.x) &&
+				std::min(l2p1.y, l2p2.y) <= y && y <= std::max(l2p1.y, l2p2.y))
 			{
 				return { x, y, 0 };
 			}
 			else {
+				//If not intersecting, return infinity
 				return { INFINITY, INFINITY , INFINITY };
 			}
 
