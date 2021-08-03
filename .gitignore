@@ -353,3 +353,9 @@ Star_Dodgers/Release/
 *.tlog
 
 *.idb
+
+Physics_Exercises/Debug/Physics_Exercises.vcxproj.FileListAbsolute.txt
+
+*.lastbuildstate
+
+Physics_Exercises/Release/Physics_Exercises.vcxproj.FileListAbsolute.txt

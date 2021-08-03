@@ -2,47 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Windows.h>
-#include <iomanip>
 
 #include "CVector.h"
-
-struct Line {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
-
-	bool IsValid() {
-		if (a.AnyInf()|| b.AnyInf()) return false;
-		else return true;
-	}
-}line;
-
-//std::vector<Line> lines;
-
-struct Triangle {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
-	Vector3 c = Vector3::Zero();
-
-	sf::Color col = sf::Color::White;
-
-	bool IsValid() {
-		if (a.AnyInf() || b.AnyInf() || c.AnyInf()) return false;
-		else return true;
-	}
-};
-
-std::vector<Triangle*> tris = {new Triangle()};
 
 int FixedUpdate();
 void Draw();
 
 void DrawTriangle(Triangle _t);
-
-bool freezeMouse = false;
-
-bool makeLine = false;
-
-bool makeTri = false;
 
 void TestLagrange();
 void TestPlanePoint();
@@ -51,6 +17,15 @@ void TestPlaneTriangle();
 
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
+
+bool freezeMouse = false;
+
+bool makeLine = false;
+
+bool makeTri = false;
+
+std::vector<Triangle*> tris = { new Triangle() };
+Line line;
 
 class CGame {
 public:
