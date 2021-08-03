@@ -2,6 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Windows.h>
+#include <box2d/box2d.h>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include "CVector.h"
 
@@ -27,6 +31,24 @@ bool makeTri = false;
 std::vector<Triangle*> tris = { new Triangle() };
 Line line;
 
+b2Vec2 gravity(0.0f, -10.0f);
+b2World world(gravity);
+
+b2BodyDef groundBodyDef;
+b2Body* groundBody;
+b2PolygonShape groundBox;
+
+b2BodyDef bodyDef;
+b2Body* body;
+b2PolygonShape dynamicBox;
+b2FixtureDef fixtureDef;
+
+int32 velocityIterations = 6;
+int32 positionIterations = 2;
+
+//FixedUpdate() call rate
+double timeStep = (1.0f / 60.0f);
+
 class CGame {
 public:
 	sf::RenderWindow* wind;
@@ -35,22 +57,46 @@ public:
 
 int main() {
 
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+
 	//Creating Different Windows
-	sf::RenderWindow window(sf::VideoMode(800, 600), "ProgramName - By Keane Carotenuto");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "ProgramName - By Keane Carotenuto", sf::Style::Default, settings);
 	game.wind = &window;
+
+	/*sf::View view = window.getDefaultView();
+	view.setSize(800, -600);
+	window.setView(view);*/
 
 	//Manages the FixedUpdate() timing
 	double stepTime = 0;
 	bool drawn = false;
 	sf::Clock clock;
 
-	//FixedUpdate() call rate
-	double step = (1.0f / 60.0f);
+	
+	//Make floor
+	groundBodyDef.position.Set(0.0f, -10.0f);
+	groundBody = world.CreateBody(&groundBodyDef);
+	groundBox.SetAsBox(800.0f, 10.0f);
+	groundBody->CreateFixture(&groundBox, 0.0f);
 
+	//Make box
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(200.0f / 30.0f, 200.0f / 30.0f);
+	body = world.CreateBody(&bodyDef);
+	dynamicBox.SetAsBox(20.0f / 30.0f / 2.0f, 20.0f / 30.0f / 2.0f);
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.75f;
+	body->CreateFixture(&fixtureDef);
+	body->SetTransform(body->GetPosition(), 41 * (double)(M_PI / 180.0));
+
+	//make rect for box
 	sf::RectangleShape* test = new sf::RectangleShape();
-	test->setPosition(sf::Vector2f(10, 10));
+	test->setPosition(sf::Vector2f(0, 200));
 	test->setFillColor(sf::Color::Red);
-	test->setSize(sf::Vector2f(10, 10));
+	test->setSize(sf::Vector2f(20, 20));
+	test->setOrigin(10, 10);
 
 	game.toDraw.push_back(test);
 
@@ -59,12 +105,12 @@ int main() {
 		stepTime += clock.getElapsedTime().asSeconds();
 		clock.restart();
 
-		while (stepTime >= step)
+		while (stepTime >= timeStep)
 		{
 			//Main Loop of Game
 			if (FixedUpdate() == 0) return 0;
 
-			stepTime -= step;
+			stepTime -= timeStep;
 			drawn = false;
 		}
 
@@ -117,19 +163,35 @@ int main() {
 }
 
 int FixedUpdate() {
-	sf::RectangleShape* theRect = dynamic_cast<sf::RectangleShape*>(game.toDraw[0]);
+	//step b2D system
+	world.Step(timeStep, velocityIterations, positionIterations);
 
+	//update visual
+	b2Vec2 position = body->GetPosition();
+	float angle = body->GetAngle();
+	sf::RectangleShape* theRect = dynamic_cast<sf::RectangleShape*>(game.toDraw[0]);
+	theRect->setPosition(position.x * 30.0, game.wind->getSize().y - position.y * 30.0);
+	theRect->setRotation(-angle / (M_PI/ 180.0));
+
+	//move box
+	float force = 10;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		theRect->setPosition(sf::Vector2f(theRect->getPosition().x - 1, theRect->getPosition().y));
+		body->ApplyForceToCenter({-force,0}, true);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		theRect->setPosition(sf::Vector2f(theRect->getPosition().x + 1, theRect->getPosition().y));
+		body->ApplyForceToCenter({ force,0 }, true);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		theRect->setPosition(sf::Vector2f(theRect->getPosition().x, theRect->getPosition().y - 1));
+		body->ApplyForceToCenter({ 0,force }, true);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		theRect->setPosition(sf::Vector2f(theRect->getPosition().x, theRect->getPosition().y + 1));
+		body->ApplyForceToCenter({ 0,-force }, true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+		body->ApplyTorque(force / 5, true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+		body->ApplyTorque(-force / 5, true);
 	}
 
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
