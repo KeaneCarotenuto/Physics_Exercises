@@ -14,6 +14,8 @@ void Draw();
 
 void DrawTriangle(Triangle _t);
 
+void DrawCapsule(Capsule _c);
+
 void TestLagrange();
 void TestPlanePoint();
 void TestPlaneLine();
@@ -28,8 +30,12 @@ bool makeLine = false;
 
 bool makeTri = false;
 
+bool makeCap = false;
+
 std::vector<Triangle*> tris = { new Triangle() };
 Line line;
+
+std::vector<Capsule*> caps = { new Capsule(), new Capsule() };
 
 b2Vec2 gravity(0.0f, -10.0f);
 b2World world(gravity);
@@ -51,6 +57,7 @@ double timeStep = (1.0f / 60.0f);
 
 class CGame {
 public:
+	sf::Clock time;
 	sf::RenderWindow* wind;
 	std::vector<sf::Drawable*> toDraw;
 }game;
@@ -71,6 +78,7 @@ int main() {
 	//Manages the FixedUpdate() timing
 	double stepTime = 0;
 	bool drawn = false;
+	
 	sf::Clock clock;
 
 	
@@ -194,21 +202,6 @@ int FixedUpdate() {
 		body->ApplyTorque(-force / 5, true);
 	}
 
-	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
-		makeLine = true;
-
-		line.a = Vector3::Infinity();
-		line.b = Vector3::Infinity();
-	}
-
-	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-		makeTri = true;
-
-		tris[0]->a = Vector3::Infinity();
-		tris[0]->b = Vector3::Infinity();
-		tris[0]->c = Vector3::Infinity();
-	}
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 		if (makeLine) {
 			makeLine = false;
@@ -224,9 +217,36 @@ int FixedUpdate() {
 			tris[0]->b = Vector3::Infinity();
 			tris[0]->c = Vector3::Infinity();
 		}
+
+		if (makeCap) {
+			makeCap = false;
+
+			caps[0]->a = Vector3::Infinity();
+			caps[0]->b = Vector3::Infinity();
+			caps[0]->radius = (double)INFINITY;
+			
+			caps[1]->a = Vector3::Infinity();
+			caps[1]->b = Vector3::Infinity();
+			caps[1]->radius = (double)INFINITY;
+		}
 	}
 
-	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+		makeLine = true;
+
+		line.a = Vector3::Infinity();
+		line.b = Vector3::Infinity();
+	}
+
+	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+		makeTri = true;
+
+		tris[0]->a = Vector3::Infinity();
+		tris[0]->b = Vector3::Infinity();
+		tris[0]->c = Vector3::Infinity();
+	}
+
+	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		std::vector<Triangle*> toAdd;
 
 		for (Triangle* _t : tris) {
@@ -362,10 +382,28 @@ int FixedUpdate() {
 				}
 				else if (tris[0]->c == Vector3::Infinity()) {
 					tris[0]->c = (Vector3)pos;
+					tris[0]->col = sf::Color::White;
 					makeTri = false;
 				}
 				else {
 					makeTri = false;
+				}
+			}
+			else if (makeCap) {
+				if (caps[0]->a == Vector3::Infinity()) {
+					caps[0]->a = (Vector3)pos;
+				}
+				else if (caps[0]->b == Vector3::Infinity()) {
+					caps[0]->b = (Vector3)pos;
+				}
+				else if (caps[1]->a == Vector3::Infinity()) {
+					caps[1]->a = (Vector3)pos;
+				}
+				else if (caps[1]->b == Vector3::Infinity()) {
+					caps[1]->b = (Vector3)pos;
+				}
+				else {
+					makeCap = false;
 				}
 			}
 		}
@@ -380,6 +418,8 @@ int FixedUpdate() {
 
 void Draw() {
 	game.wind->clear();
+
+	DrawCapsule(*caps[0]);
 
 	for (sf::Drawable* item : game.toDraw)
 	{
@@ -477,6 +517,37 @@ void DrawTriangle(Triangle _t)
 	Tlines[2].color = _t.col;
 
 	game.wind->draw(Tlines);
+}
+
+void DrawCapsule(Capsule _c) 
+{
+	_c.a = { 100,100,0 };
+	_c.b = { 
+		sin(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0 ,
+		cos(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0,
+		0 };
+	_c.radius = 30;
+	_c.col = sf::Color::White;
+
+	sf::CircleShape circle1(_c.radius);
+	circle1.setOrigin(_c.radius, _c.radius);
+	circle1.setPosition(_c.a);
+	circle1.setFillColor(_c.col);
+
+	sf::CircleShape circle2(_c.radius);
+	circle2.setOrigin(_c.radius, _c.radius);
+	circle2.setPosition(_c.b);
+	circle2.setFillColor(_c.col);
+
+	sf::RectangleShape rect(sf::Vector2f((_c.b - _c.a).Mag(), _c.radius*2.0f));
+	rect.setOrigin(rect.getSize().x / 2.0f, rect.getSize().y / 2.0f);
+	rect.setPosition(_c.a + (_c.b - _c.a) * (0.5f));
+	rect.setFillColor(_c.col);
+	rect.setRotation((_c.b - _c.a).Angle());
+
+	game.wind->draw(circle1);
+	game.wind->draw(circle2);
+	game.wind->draw(rect);
 }
 
 void TestLagrange() {

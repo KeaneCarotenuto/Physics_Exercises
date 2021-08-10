@@ -2,6 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 class CVector
 {
@@ -32,6 +35,8 @@ public:
 	Vector3 Normalized();
 
 	double Mag();
+
+	double Angle();
 
 	bool AnyZero();
 
@@ -94,4 +99,19 @@ struct Triangle {
 		if (a.AnyInf() || b.AnyInf() || c.AnyInf()) return false;
 		else return true;
 	}
+};
+
+struct Capsule {
+	Vector3 a = Vector3::Zero();
+	Vector3 b = Vector3::Zero();
+	double radius = 0;
+
+	sf::Color col = sf::Color::White;
+
+	bool IsValid() {
+		if (a.AnyInf() || b.AnyInf() || radius < 0.0 || radius == (double)INFINITY) return false;
+		else return true;
+	}
+
+	//Distance check here http://paulbourke.net/geometry/pointlineplane/
 };

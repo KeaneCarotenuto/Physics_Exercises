@@ -34,6 +34,11 @@ double Vector3::Mag() {
 	return (double)sqrt(double(x) * double(x) + double(y) * double(y) + double(z) * double(z));
 }
 
+double Vector3::Angle()
+{
+	return atan(y / x) / (2 * M_PI) * 360;
+}
+
 Vector3 Vector3::Normalized() {
 	double mag = this->Mag();
 	return Vector3(x / mag, y / mag, z / mag);
