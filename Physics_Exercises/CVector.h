@@ -99,6 +99,10 @@ struct Line {
 			return true;
 		else return false;
 	}
+
+	static Line Shortest(Line _a, Line _b) {
+		return (fmin(_a.Length(), _b.Length()) == _a.Length() ? _a : _b);
+	}
 };
 
 struct Triangle {
@@ -132,62 +136,37 @@ struct Capsule {
 		else return true;
 	}
 
-	static Line ShortestLine(Capsule cap1, Capsule cap2) {
-		
+	static Line ShortestDistanceBetween(Capsule cap1, Capsule cap2) {
 
-		double distAA = Vector3::Distance(cap1.a, cap2.a);
-		double distAB = Vector3::Distance(cap1.a, cap2.b);
-		double distBA = Vector3::Distance(cap1.b, cap2.a);
-		double distBB = Vector3::Distance(cap1.b, cap2.b);
+		Line lineAA = ShortestPerpLine(cap1, cap2, cap1.a, cap2.a);
+		Line lineAB = ShortestPerpLine(cap1, cap2, cap1.a, cap2.b);
+		Line lineBA = ShortestPerpLine(cap1, cap2, cap1.b, cap2.a);
+		Line lineBB = ShortestPerpLine(cap1, cap2, cap1.b, cap2.b);
 
-		double shortest = fmin(fmin(distAA, distAB), fmin(distBA, distBB));
-
-		Vector3 intPoint = Vector3::LineIntersectsLine( cap1.a, cap1.b, cap2.a, cap2.b, true);
-		
-		Vector3 a = Vector3::Infinity();
-		Vector3 b = Vector3::Infinity();
-
-		if (shortest == distAA) {
-			//return { cap1.a, cap2.a };
-			a = intPoint - cap1.a;
-			b = intPoint - cap2.a;
-		}
-		else if (shortest == distAB) {
-			//return { cap1.a, cap2.b };
-			a = intPoint - cap1.a;
-			b = intPoint - cap2.b;
-		}
-		else if(shortest == distBA) {
-			//return { cap1.b, cap2.a };
-			a = intPoint - cap1.b;
-			b = intPoint - cap2.a;
-		}
-		else if(shortest == distBB) {
-			//return { cap1.b, cap2.b };
-			a = intPoint - cap1.b;
-			b = intPoint - cap2.b;
-		}
-		else {
-			return { Vector3::Infinity(), Vector3::Infinity() };
-		}
-
-		double angle = acos((Vector3::Dot(a, b)) * (1 / (a.Mag() * b.Mag()))) ;
-
-		double backDistA = cos(angle) * a.Mag();
-		Vector3 closestPointA = intPoint - (b.Normalized() * backDistA);
-		Line returnLineA = { closestPointA, intPoint - a };
-
-		double backDistB = cos(angle) * b.Mag();
-		Vector3 closestPointB = intPoint - (a.Normalized() * backDistB);
-		Line returnLineB = { closestPointB, intPoint - b };
-
-		//if (!Line{ cap1.a, cap1.b }.ContainsPoint(closestPointA.x, closestPointA.y) && !Line{ cap2.a, cap2.b }.ContainsPoint(closestPointB.x, closestPointB.y)) return { Vector3::Infinity(), Vector3::Infinity() };
-
-		return (fmin(returnLineA.Length(), returnLineB.Length()) == returnLineA.Length() ? returnLineA : returnLineB);
-
-		//return toReturn;
-		
+		return Line::Shortest( Line::Shortest(lineAA, lineAB), Line::Shortest(lineBA, lineBB));
 	}
 
-	//Distance check here http://paulbourke.net/geometry/pointlineplane/
+	static Line ShortestPerpLine(Capsule cap1, Capsule cap2, Vector3 cap1End, Vector3 cap2End)
+	{
+		Vector3 intPoint = Vector3::LineIntersectsLine(cap1.a, cap1.b, cap2.a, cap2.b, true);
+
+		Vector3 cap1Dir = intPoint - cap1End;
+		Vector3 cap2Dir = intPoint - cap2End;
+
+		double angle = acos((Vector3::Dot(cap1Dir, cap2Dir)) * (1 / (cap1Dir.Mag() * cap2Dir.Mag())));
+
+		double backDistOnCap2 = cos(angle) * cap1Dir.Mag();
+		Vector3 closestPointOnCap2 = intPoint - (cap2Dir.Normalized() * backDistOnCap2);
+		Line returnLineA = { closestPointOnCap2, intPoint - cap1Dir };
+		if (!Line{ cap2.a, cap2.b }.ContainsPoint(closestPointOnCap2.x, closestPointOnCap2.y)) returnLineA = { Vector3::Infinity(), Vector3::Infinity() };
+
+		double backDistOnCap1 = cos(angle) * cap2Dir.Mag();
+		Vector3 closestPointOnCap1 = intPoint - (cap1Dir.Normalized() * backDistOnCap1);
+		Line returnLineB = { closestPointOnCap1, intPoint - cap2Dir };
+		if (!Line{ cap1.a, cap1.b }.ContainsPoint(closestPointOnCap1.x, closestPointOnCap1.y)) returnLineB = { Vector3::Infinity(), Vector3::Infinity() };
+
+		Line tipToTip = { cap1End , cap2End };
+
+		return  Line::Shortest(Line::Shortest(returnLineA, returnLineB), tipToTip);
+	}
 };

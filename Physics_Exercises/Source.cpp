@@ -439,7 +439,27 @@ void Draw() {
 	DrawCapsule(*caps[0]);
 	DrawCapsule(*caps[1]);
 
-	DrawLine(Capsule::ShortestLine(*caps[0], *caps[1]));
+	Vector3 a = Vector3::Infinity();
+	Vector3 b = Vector3::Infinity();
+
+	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]));
+
+	if (true) {
+		sf::CircleShape c;
+		
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+		c.setFillColor(sf::Color::Red);
+		c.setPosition((sf::Vector2f)a);
+		game.wind->draw(c);
+		c.setFillColor(sf::Color::Blue);
+		c.setPosition((sf::Vector2f)b);
+		game.wind->draw(c);
+	}
+	
+
+
+	
 
 	for (sf::Drawable* item : game.toDraw)
 	{
@@ -551,7 +571,7 @@ void DrawCapsule(Capsule _c)
 		sin(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0 ,
 		cos(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0,
 		0 };*/
-	_c.col = sf::Color::White;
+	_c.col = (_c.a == caps[0]->a ? sf::Color::Red : sf::Color::Blue);
 	_c.radius = 10;
 
 	sf::CircleShape circle1(_c.radius);
