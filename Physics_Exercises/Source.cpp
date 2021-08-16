@@ -410,6 +410,10 @@ int FixedUpdate() {
 				if (caps[0]->a == Vector3::Infinity()) {
 					caps[0]->a = (Vector3)pos;
 				}
+				else if (caps[1]->radius == (double)INFINITY) {
+					caps[0]->radius = (caps[0]->a - (Vector3)pos).Mag();
+					caps[1]->radius = caps[0]->radius;
+				}
 				else if (caps[0]->b == Vector3::Infinity()) {
 					caps[0]->b = (Vector3)pos;
 				}
@@ -428,6 +432,10 @@ int FixedUpdate() {
 	else {
 		if (freezeMouse) freezeMouse = false;
 	}
+
+	if (makeCap && caps[0]->a != Vector3::Infinity() && caps[1]->radius == (double)INFINITY) {
+		caps[0]->radius = (caps[0]->a - (Vector3)sf::Mouse::getPosition(*game.wind)).Mag();
+	}
 	
 
 	return 1;
@@ -443,24 +451,7 @@ void Draw() {
 	Vector3 b = Vector3::Infinity();
 
 	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]));
-
-	if (true) {
-		sf::CircleShape c;
-		
-		c.setRadius(5.0f);
-		c.setOrigin(5.0f, 5.0f);
-		c.setFillColor(sf::Color::Red);
-		c.setPosition((sf::Vector2f)a);
-		game.wind->draw(c);
-		c.setFillColor(sf::Color::Blue);
-		c.setPosition((sf::Vector2f)b);
-		game.wind->draw(c);
-	}
 	
-
-
-	
-
 	for (sf::Drawable* item : game.toDraw)
 	{
 		game.wind->draw((*item));
@@ -507,9 +498,6 @@ void Draw() {
 			c.setPosition((sf::Vector2f)line.a);
 			game.wind->draw(c);
 		}
-
-		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
-		game.wind->draw(c);
 	}
 	
 	if (makeTri) {
@@ -527,7 +515,13 @@ void Draw() {
 			c.setPosition((sf::Vector2f)tris[0]->b);
 			game.wind->draw(c);
 		}
+	}
 
+	if (makeLine || makeTri || makeCap) {
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::Red);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
 		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
 		game.wind->draw(c);
 	}
@@ -572,7 +566,6 @@ void DrawCapsule(Capsule _c)
 		cos(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0,
 		0 };*/
 	_c.col = (_c.a == caps[0]->a ? sf::Color::Red : sf::Color::Blue);
-	_c.radius = 10;
 
 	sf::CircleShape circle1(_c.radius);
 	circle1.setOrigin(_c.radius, _c.radius);
