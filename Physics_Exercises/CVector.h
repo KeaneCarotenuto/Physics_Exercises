@@ -52,6 +52,8 @@ public:
 
 	static double Diff(Vector3 a, Vector3 b);
 
+	static double Distance(Vector3 a, Vector3 b);
+
 	/// <summary>
 	/// Returns true if given point (p) lies on plane (k n)
 	/// </summary>
@@ -74,7 +76,7 @@ public:
 
 	static bool TriangleIntersectsPlane(Vector3 pp, Vector3 pn, Vector3 ta, Vector3 tb, Vector3 tc);
 
-	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2);
+	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2, bool isInfinite = false);
 
 };
 
@@ -82,9 +84,20 @@ struct Line {
 	Vector3 a = Vector3::Zero();
 	Vector3 b = Vector3::Zero();
 
+	double Length() {
+		return Vector3::Distance(a, b);
+	}
+
 	bool IsValid() {
 		if (a.AnyInf() || b.AnyInf()) return false;
 		else return true;
+	}
+
+	bool ContainsPoint(double x, double y) {
+		if (std::min(a.x, b.x) <= x && x <= std::max(a.x, b.x) &&
+			std::min(a.y, b.y) <= y && y <= std::max(a.y, b.y))
+			return true;
+		else return false;
 	}
 };
 
@@ -102,6 +115,12 @@ struct Triangle {
 };
 
 struct Capsule {
+	Capsule(Vector3 _a, Vector3 _b, double _rad) {
+		a = _a;
+		b = _b;
+		radius = _rad;
+	}
+
 	Vector3 a = Vector3::Zero();
 	Vector3 b = Vector3::Zero();
 	double radius = 0;
@@ -111,6 +130,63 @@ struct Capsule {
 	bool IsValid() {
 		if (a.AnyInf() || b.AnyInf() || radius < 0.0 || radius == (double)INFINITY) return false;
 		else return true;
+	}
+
+	static Line ShortestLine(Capsule cap1, Capsule cap2) {
+		
+
+		double distAA = Vector3::Distance(cap1.a, cap2.a);
+		double distAB = Vector3::Distance(cap1.a, cap2.b);
+		double distBA = Vector3::Distance(cap1.b, cap2.a);
+		double distBB = Vector3::Distance(cap1.b, cap2.b);
+
+		double shortest = fmin(fmin(distAA, distAB), fmin(distBA, distBB));
+
+		Vector3 intPoint = Vector3::LineIntersectsLine( cap1.a, cap1.b, cap2.a, cap2.b, true);
+		
+		Vector3 a = Vector3::Infinity();
+		Vector3 b = Vector3::Infinity();
+
+		if (shortest == distAA) {
+			//return { cap1.a, cap2.a };
+			a = intPoint - cap1.a;
+			b = intPoint - cap2.a;
+		}
+		else if (shortest == distAB) {
+			//return { cap1.a, cap2.b };
+			a = intPoint - cap1.a;
+			b = intPoint - cap2.b;
+		}
+		else if(shortest == distBA) {
+			//return { cap1.b, cap2.a };
+			a = intPoint - cap1.b;
+			b = intPoint - cap2.a;
+		}
+		else if(shortest == distBB) {
+			//return { cap1.b, cap2.b };
+			a = intPoint - cap1.b;
+			b = intPoint - cap2.b;
+		}
+		else {
+			return { Vector3::Infinity(), Vector3::Infinity() };
+		}
+
+		double angle = acos((Vector3::Dot(a, b)) * (1 / (a.Mag() * b.Mag()))) ;
+
+		double backDistA = cos(angle) * a.Mag();
+		Vector3 closestPointA = intPoint - (b.Normalized() * backDistA);
+		Line returnLineA = { closestPointA, intPoint - a };
+
+		double backDistB = cos(angle) * b.Mag();
+		Vector3 closestPointB = intPoint - (a.Normalized() * backDistB);
+		Line returnLineB = { closestPointB, intPoint - b };
+
+		//if (!Line{ cap1.a, cap1.b }.ContainsPoint(closestPointA.x, closestPointA.y) && !Line{ cap2.a, cap2.b }.ContainsPoint(closestPointB.x, closestPointB.y)) return { Vector3::Infinity(), Vector3::Infinity() };
+
+		return (fmin(returnLineA.Length(), returnLineB.Length()) == returnLineA.Length() ? returnLineA : returnLineB);
+
+		//return toReturn;
+		
 	}
 
 	//Distance check here http://paulbourke.net/geometry/pointlineplane/

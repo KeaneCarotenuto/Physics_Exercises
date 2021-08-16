@@ -31,7 +31,7 @@ std::string Vector3::ToString() {
 }
 
 double Vector3::Mag() {
-	return (double)sqrt(double(x) * double(x) + double(y) * double(y) + double(z) * double(z));
+	return (double)abs(sqrt(double(x) * double(x) + double(y) * double(y) + double(z) * double(z)));
 }
 
 double Vector3::Angle()
@@ -106,6 +106,11 @@ double Vector3::Diff(Vector3 a, Vector3 b) {
 	return std::abs(a.x - b.x) + std::abs(a.y - b.y) + std::abs(a.z - b.z);
 }
 
+double Vector3::Distance(Vector3 a, Vector3 b)
+{
+	return (a - b).Mag();
+}
+
 bool Vector3::IsPointOnPlane(Vector3 p, Vector3 k, Vector3 n) {
 	double dot = Vector3::Dot(p - k, n);
 
@@ -147,7 +152,7 @@ bool Vector3::TriangleIntersectsPlane(Vector3 pp, Vector3 pn, Vector3 ta, Vector
 	return false;
 }
 
-Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2)
+Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2, bool isInfinite)
 {
 	//convert line 1 from vector to equation Ax + By = C
 	double l1a = l1p2.y - l1p1.y;
@@ -173,10 +178,14 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 		double y = (l1a * l3c - l2a * l1c) / determinant;
 
 		//check if actually intersecting between points
-		if (std::min(l1p1.x, l1p2.x) <= x && x <= std::max(l1p1.x, l1p2.x) &&
+		if (isInfinite || 
+			(
+			std::min(l1p1.x, l1p2.x) <= x && x <= std::max(l1p1.x, l1p2.x) &&
 			std::min(l1p1.y, l1p2.y) <= y && y <= std::max(l1p1.y, l1p2.y) &&
 			std::min(l2p1.x, l2p2.x) <= x && x <= std::max(l2p1.x, l2p2.x) &&
-			std::min(l2p1.y, l2p2.y) <= y && y <= std::max(l2p1.y, l2p2.y))
+			std::min(l2p1.y, l2p2.y) <= y && y <= std::max(l2p1.y, l2p2.y)
+			)
+		)
 		{
 			return { x, y, 0 };
 		}

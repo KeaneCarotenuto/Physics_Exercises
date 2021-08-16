@@ -12,6 +12,8 @@
 int FixedUpdate();
 void Draw();
 
+void DrawLine(Line _line);
+
 void DrawTriangle(Triangle _t);
 
 void DrawCapsule(Capsule _c);
@@ -35,7 +37,10 @@ bool makeCap = false;
 std::vector<Triangle*> tris = { new Triangle() };
 Line line;
 
-std::vector<Capsule*> caps = { new Capsule(), new Capsule() };
+std::vector<Capsule*> caps = { 
+	new Capsule(Vector3(100, 100, 0), Vector3(200,200,0), 5), 
+	new Capsule(Vector3(300, 100, 0), Vector3(200,130,0), 5)
+};
 
 b2Vec2 gravity(0.0f, -10.0f);
 b2World world(gravity);
@@ -246,6 +251,18 @@ int FixedUpdate() {
 		tris[0]->c = Vector3::Infinity();
 	}
 
+	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+		makeCap = true;
+
+		caps[0]->a = Vector3::Infinity();
+		caps[0]->b = Vector3::Infinity();
+		caps[0]->radius = (double)INFINITY;
+
+		caps[1]->a = Vector3::Infinity();
+		caps[1]->b = Vector3::Infinity();
+		caps[1]->radius = (double)INFINITY;
+	}
+
 	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		std::vector<Triangle*> toAdd;
 
@@ -420,6 +437,9 @@ void Draw() {
 	game.wind->clear();
 
 	DrawCapsule(*caps[0]);
+	DrawCapsule(*caps[1]);
+
+	DrawLine(Capsule::ShortestLine(*caps[0], *caps[1]));
 
 	for (sf::Drawable* item : game.toDraw)
 	{
@@ -493,16 +513,21 @@ void Draw() {
 	}
 
 	if (!makeLine) {
-		sf::VertexArray Llines(sf::LinesStrip, 2);
-		Llines[0].position = (sf::Vector2f)line.a;
-		Llines[1].position = (sf::Vector2f)line.b;
-		Llines[0].color = sf::Color::Red;
-		Llines[1].color = sf::Color::Red;
-		game.wind->draw(Llines);
+		DrawLine(line);
 	}
 
 	//Update main window
 	game.wind->display();
+}
+
+void DrawLine(Line _line)
+{
+	sf::VertexArray Llines(sf::LinesStrip, 2);
+	Llines[0].position = (sf::Vector2f)_line.a;
+	Llines[1].position = (sf::Vector2f)_line.b;
+	Llines[0].color = sf::Color::Red;
+	Llines[1].color = sf::Color::Red;
+	game.wind->draw(Llines);
 }
 
 void DrawTriangle(Triangle _t)
@@ -521,13 +546,13 @@ void DrawTriangle(Triangle _t)
 
 void DrawCapsule(Capsule _c) 
 {
-	_c.a = { 100,100,0 };
+	/*_c.a = { 100,100,0 };
 	_c.b = { 
 		sin(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0 ,
 		cos(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0,
-		0 };
-	_c.radius = 30;
+		0 };*/
 	_c.col = sf::Color::White;
+	_c.radius = 10;
 
 	sf::CircleShape circle1(_c.radius);
 	circle1.setOrigin(_c.radius, _c.radius);
