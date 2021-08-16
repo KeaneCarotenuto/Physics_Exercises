@@ -37,8 +37,8 @@ std::vector<Triangle*> tris = { new Triangle() };
 Line line;
 
 std::vector<Capsule*> caps = { 
-	new Capsule(Vector3(100, 100, 0), Vector3(200,200,0), 5), 
-	new Capsule(Vector3(300, 100, 0), Vector3(200,130,0), 5)
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY),
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY)
 };
 
 //FixedUpdate() call rate
@@ -628,9 +628,3 @@ Vector3 InputVec3(std::string msg) {
 	double z = InputDouble("double z: ");
 	return Vector3(x, y, z);
 }
-
-//double Inputdouble(std::string msg, double min, double max) {
-//	double i = -INFINITY;
-//
-//
-//}
