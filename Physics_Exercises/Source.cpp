@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Windows.h>
-#include <box2d/box2d.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -42,21 +41,6 @@ std::vector<Capsule*> caps = {
 	new Capsule(Vector3(300, 100, 0), Vector3(200,130,0), 5)
 };
 
-b2Vec2 gravity(0.0f, -10.0f);
-b2World world(gravity);
-
-b2BodyDef groundBodyDef;
-b2Body* groundBody;
-b2PolygonShape groundBox;
-
-b2BodyDef bodyDef;
-b2Body* body;
-b2PolygonShape dynamicBox;
-b2FixtureDef fixtureDef;
-
-int32 velocityIterations = 6;
-int32 positionIterations = 2;
-
 //FixedUpdate() call rate
 double timeStep = (1.0f / 60.0f);
 
@@ -64,7 +48,6 @@ class CGame {
 public:
 	sf::Clock time;
 	sf::RenderWindow* wind;
-	std::vector<sf::Drawable*> toDraw;
 }game;
 
 int main() {
@@ -76,42 +59,11 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ProgramName - By Keane Carotenuto", sf::Style::Default, settings);
 	game.wind = &window;
 
-	/*sf::View view = window.getDefaultView();
-	view.setSize(800, -600);
-	window.setView(view);*/
-
 	//Manages the FixedUpdate() timing
 	double stepTime = 0;
 	bool drawn = false;
 	
 	sf::Clock clock;
-
-	
-	//Make floor
-	groundBodyDef.position.Set(0.0f, -10.0f);
-	groundBody = world.CreateBody(&groundBodyDef);
-	groundBox.SetAsBox(800.0f, 10.0f);
-	groundBody->CreateFixture(&groundBox, 0.0f);
-
-	//Make box
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(200.0f / 30.0f, 200.0f / 30.0f);
-	body = world.CreateBody(&bodyDef);
-	dynamicBox.SetAsBox(20.0f / 30.0f / 2.0f, 20.0f / 30.0f / 2.0f);
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.75f;
-	body->CreateFixture(&fixtureDef);
-	body->SetTransform(body->GetPosition(), 41 * (double)(M_PI / 180.0));
-
-	//make rect for box
-	sf::RectangleShape* test = new sf::RectangleShape();
-	test->setPosition(sf::Vector2f(0, 200));
-	test->setFillColor(sf::Color::Red);
-	test->setSize(sf::Vector2f(20, 20));
-	test->setOrigin(10, 10);
-
-	game.toDraw.push_back(test);
 
 	while (window.isOpen() == true)
 	{
@@ -176,37 +128,6 @@ int main() {
 }
 
 int FixedUpdate() {
-	//step b2D system
-	world.Step(timeStep, velocityIterations, positionIterations);
-
-	//update visual
-	b2Vec2 position = body->GetPosition();
-	float angle = body->GetAngle();
-	sf::RectangleShape* theRect = dynamic_cast<sf::RectangleShape*>(game.toDraw[0]);
-	theRect->setPosition(position.x * 30.0, game.wind->getSize().y - position.y * 30.0);
-	theRect->setRotation(-angle / (M_PI/ 180.0));
-
-	//move box
-	float force = 10;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		body->ApplyForceToCenter({-force,0}, true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		body->ApplyForceToCenter({ force,0 }, true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		body->ApplyForceToCenter({ 0,force }, true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		body->ApplyForceToCenter({ 0,-force }, true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-		body->ApplyTorque(force / 5, true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-		body->ApplyTorque(-force / 5, true);
-	}
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 		if (makeLine) {
 			makeLine = false;
@@ -451,11 +372,6 @@ void Draw() {
 	Vector3 b = Vector3::Infinity();
 
 	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]));
-	
-	for (sf::Drawable* item : game.toDraw)
-	{
-		game.wind->draw((*item));
-	}
 
 	if (!makeTri) {
 		DrawTriangle(*tris[0]);
