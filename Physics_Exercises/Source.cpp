@@ -2,16 +2,16 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Windows.h>
-
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include "CVector.h"
+
+void ToggleControls();
 
 int FixedUpdate();
 void Draw();
 
-void DrawLine(Line _line);
+void DrawLine(Line _line, sf::Color _col);
 
 void DrawTriangle(Triangle _t);
 
@@ -25,6 +25,25 @@ void TestPlaneTriangle();
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
 
+sf::Font font;
+
+//In program instructions/controls
+sf::Text instructions;
+std::string defaultInstruct = "[TAB] TO OPEN AND CLOSE CONTROLS\n";
+std::string fullInstruct =	
+	"[1] TO TEST LAGRANGE'S FORMULA\n"\
+	"[2] TO TEST PLANE VS POINT FUNCTION\n"\
+	"[3] TO TEST LINE SEGMENT VS PLANE FUNCTION\n"\
+	"[4] TO TEST TRIANGLE VS PLANE FUNCTION\n"\
+	"[NOTE] PRESS NUMBER KEYS, THEN CHECK CONSOLE\n\n"\
+	"[T] TO CLEAR/START TRIANGLE\n"\
+	"[L] TO CLEAR/START LINE\n"\
+	"[D] TO DIVIDE TRIANGLE BY LINE\n"\
+	"[C] TO CLEAR/START CAPSULES\n\n"\
+	"[LEFT CLICK] TO CREATE TRIANGLE/LINE/CAPSULES\n"\
+	"[ESC] TO CANCEL SHAPE\n"\
+	"[TAB] TO OPEN AND CLOSE CONTROLS\n";
+
 bool freezeMouse = false;
 
 bool makeLine = false;
@@ -33,12 +52,16 @@ bool makeTri = false;
 
 bool makeCap = false;
 
+//One triangle
 std::vector<Triangle*> tris = { new Triangle() };
+
+//One line
 Line line;
 
+//Two capsules
 std::vector<Capsule*> caps = { 
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY),
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY)
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Red),
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Blue)
 };
 
 //FixedUpdate() call rate
@@ -47,17 +70,35 @@ double timeStep = (1.0f / 60.0f);
 class CGame {
 public:
 	sf::Clock time;
-	sf::RenderWindow* wind;
+	sf::RenderWindow* wind = nullptr;
 }game;
 
 int main() {
 
+	//Make lines and such look a bit better
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 
 	//Creating Different Windows
-	sf::RenderWindow window(sf::VideoMode(800, 600), "ProgramName - By Keane Carotenuto", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(1600, 800), "ProgramName - By Keane Carotenuto", sf::Style::Default, settings);
 	game.wind = &window;
+
+	//Load font
+	if (!font.loadFromFile("Resources/DMMono-Regular.ttf"))
+	{
+		std::cout << "ERROR: Failed to load font";
+	}
+
+	//Set up controls info
+	instructions.setFont(font);
+	instructions.setFillColor(sf::Color::White);
+	instructions.setOutlineColor(sf::Color::Black);
+	instructions.setOutlineThickness(5.0f);
+	instructions.setCharacterSize(20);
+	instructions.setLineSpacing(1.5f);
+	instructions.setString(defaultInstruct);
+	instructions.setOrigin(0, instructions.getGlobalBounds().height);
+	instructions.setPosition(20, 800);
 
 	//Manages the FixedUpdate() timing
 	double stepTime = 0;
@@ -93,9 +134,10 @@ int main() {
 
 		sf::Event newEvent;
 
-		//Quit
+		
 		while (window.pollEvent(newEvent))
 		{
+			//Quit
 			if (newEvent.type == sf::Event::Closed)
 			{
 				window.close();
@@ -118,6 +160,10 @@ int main() {
 				if (newEvent.key.code == sf::Keyboard::Num4) {
 					TestPlaneTriangle();
 				}
+
+				if (newEvent.key.code == sf::Keyboard::Key::Tab) {
+					ToggleControls();
+				}
 			}
 
 			
@@ -127,7 +173,26 @@ int main() {
 	return 0;
 }
 
+/// <summary>
+/// Toggle the controls help in game
+/// </summary>
+void ToggleControls()
+{
+	if (instructions.getString() == defaultInstruct) {
+		instructions.setString(fullInstruct);
+	}
+	else {
+		instructions.setString(defaultInstruct);
+	}
+
+	instructions.setOrigin(0, instructions.getGlobalBounds().height);
+	instructions.setPosition(20, 800);
+
+
+}
+
 int FixedUpdate() {
+	//Esc to reset
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 		if (makeLine) {
 			makeLine = false;
@@ -157,6 +222,7 @@ int FixedUpdate() {
 		}
 	}
 
+	//Start making line
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
 		makeLine = true;
 
@@ -164,6 +230,7 @@ int FixedUpdate() {
 		line.b = Vector3::Infinity();
 	}
 
+	//Start making triangle
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
 		makeTri = true;
 
@@ -172,6 +239,7 @@ int FixedUpdate() {
 		tris[0]->c = Vector3::Infinity();
 	}
 
+	//Start making capsules
 	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
 		makeCap = true;
 
@@ -184,27 +252,34 @@ int FixedUpdate() {
 		caps[1]->radius = (double)INFINITY;
 	}
 
+	//Try ivide triangle by line
 	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		std::vector<Triangle*> toAdd;
 
 		for (Triangle* _t : tris) {
 			if (!_t->IsValid()) continue;
 
+			//Find all intersections
 			Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, _t->a, _t->b);
 			Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, _t->b, _t->c);
 			Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, _t->c, _t->a);
 
+			//Count intersections
 			int count = 0;
 			if (!intA.AnyInf()) count++;
 			if (!intB.AnyInf()) count++;
 			if (!intC.AnyInf()) count++;
 
+			//Only divide if enough intersections
 			if (count == 0 || count == 1) continue;
 
+			//Make new triangles
+			Triangle* t1 = new Triangle();
+			Triangle* t2 = new Triangle();
+			Triangle* t3 = new Triangle();
+
+			//Determine how the triangle must be cut
 			if (intA.AnyInf()) {
-				Triangle* t1 = new Triangle();
-				Triangle* t2 = new Triangle();
-				Triangle* t3 = new Triangle();
 
 				t1->c = _t->c;
 				t1->a = intC;
@@ -217,21 +292,8 @@ int FixedUpdate() {
 				t3->c = intC;
 				t3->a = _t->b;
 				t3->b = intB;
-
-				toAdd.push_back(t1);
-				toAdd.push_back(t2);
-				toAdd.push_back(t3);
-
-				_t->c = Vector3::Infinity();
-				_t->a = Vector3::Infinity();
-				_t->b = Vector3::Infinity();
 			}
-
-			if (intB.AnyInf()) {
-
-				Triangle* t1 = new Triangle();
-				Triangle* t2 = new Triangle();
-				Triangle* t3 = new Triangle();
+			else if (intB.AnyInf()) {
 
 				t1->a = _t->a;
 				t1->b = intA;
@@ -244,20 +306,9 @@ int FixedUpdate() {
 				t3->a = intA;
 				t3->b = _t->c;
 				t3->c = intC;
-
-				toAdd.push_back(t1);
-				toAdd.push_back(t2);
-				toAdd.push_back(t3);
-
-				_t->a = Vector3::Infinity();
-				_t->b = Vector3::Infinity();
-				_t->c = Vector3::Infinity();
 			}
-
-			if (intC.AnyInf()) {
-				Triangle* t1 = new Triangle();
-				Triangle* t2 = new Triangle();
-				Triangle* t3 = new Triangle();
+			else if (intC.AnyInf()) {
+				
 
 				t1->b = _t->b;
 				t1->c = intB;
@@ -270,17 +321,20 @@ int FixedUpdate() {
 				t3->b = intB;
 				t3->c = _t->a;
 				t3->a = intA;
-
-				toAdd.push_back(t1);
-				toAdd.push_back(t2);
-				toAdd.push_back(t3);
-
-				_t->b = Vector3::Infinity();
-				_t->c = Vector3::Infinity();
-				_t->a = Vector3::Infinity();
 			}
+
+			//Add new triangles
+			toAdd.push_back(t1);
+			toAdd.push_back(t2);
+			toAdd.push_back(t3);
+
+			//clear old tri
+			_t->b = Vector3::Infinity();
+			_t->c = Vector3::Infinity();
+			_t->a = Vector3::Infinity();
 		}
 
+		//Actually add new tris
 		for (Triangle* _t : toAdd) {
 			_t->col = sf::Color::Color(rand() % 255, rand() % 255, rand() % 255);
 			tris.push_back(_t);
@@ -288,11 +342,12 @@ int FixedUpdate() {
 
 		toAdd.clear();
 		
-
+		//Clear line
 		line.a = Vector3::Infinity();
 		line.b = Vector3::Infinity();
 	}
 
+	//Creating shapes (Line, Triangle, Capsules)
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		sf::Vector2i pos = sf::Mouse::getPosition(*game.wind);
 
@@ -343,6 +398,7 @@ int FixedUpdate() {
 				}
 				else if (caps[1]->b == Vector3::Infinity()) {
 					caps[1]->b = (Vector3)pos;
+					makeCap = false;
 				}
 				else {
 					makeCap = false;
@@ -354,6 +410,7 @@ int FixedUpdate() {
 		if (freezeMouse) freezeMouse = false;
 	}
 
+	//Update rad dynamically after first click when making capsules
 	if (makeCap && caps[0]->a != Vector3::Infinity() && caps[1]->radius == (double)INFINITY) {
 		caps[0]->radius = (caps[0]->a - (Vector3)sf::Mouse::getPosition(*game.wind)).Mag();
 	}
@@ -368,15 +425,15 @@ void Draw() {
 	DrawCapsule(*caps[0]);
 	DrawCapsule(*caps[1]);
 
-	Vector3 a = Vector3::Infinity();
-	Vector3 b = Vector3::Infinity();
+	//Draw cap shortest line
+	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]), sf::Color::White);
 
-	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]));
-
+	//Draw basic triangle
 	if (!makeTri) {
 		DrawTriangle(*tris[0]);
 	}
 
+	//Draw all other triangles + intersections with line
 	for (Triangle* _t : tris) {
 		DrawTriangle(*_t);
 
@@ -433,6 +490,7 @@ void Draw() {
 		}
 	}
 
+	//Draw dot on cursor to show clicks are needed
 	if (makeLine || makeTri || makeCap) {
 		sf::CircleShape c;
 		c.setFillColor(sf::Color::Red);
@@ -443,20 +501,22 @@ void Draw() {
 	}
 
 	if (!makeLine) {
-		DrawLine(line);
+		DrawLine(line, sf::Color::Red);
 	}
+
+	game.wind->draw(instructions);
 
 	//Update main window
 	game.wind->display();
 }
 
-void DrawLine(Line _line)
+void DrawLine(Line _line, sf::Color _col)
 {
 	sf::VertexArray Llines(sf::LinesStrip, 2);
 	Llines[0].position = (sf::Vector2f)_line.a;
 	Llines[1].position = (sf::Vector2f)_line.b;
-	Llines[0].color = sf::Color::Red;
-	Llines[1].color = sf::Color::Red;
+	Llines[0].color = _col;
+	Llines[1].color = _col;
 	game.wind->draw(Llines);
 }
 
@@ -476,28 +536,21 @@ void DrawTriangle(Triangle _t)
 
 void DrawCapsule(Capsule _c) 
 {
-	/*_c.a = { 100,100,0 };
-	_c.b = { 
-		sin(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0 ,
-		cos(game.time.getElapsedTime().asSeconds()) * 50.0 + 100.0,
-		0 };*/
-	_c.col = (_c.a == caps[0]->a ? sf::Color::Red : sf::Color::Blue);
-
-	sf::CircleShape circle1(_c.radius);
-	circle1.setOrigin(_c.radius, _c.radius);
+	sf::CircleShape circle1((float)_c.radius);
+	circle1.setOrigin((float)_c.radius, (float)_c.radius);
 	circle1.setPosition(_c.a);
 	circle1.setFillColor(_c.col);
 
-	sf::CircleShape circle2(_c.radius);
-	circle2.setOrigin(_c.radius, _c.radius);
+	sf::CircleShape circle2((float)_c.radius);
+	circle2.setOrigin((float)_c.radius, (float)_c.radius);
 	circle2.setPosition(_c.b);
 	circle2.setFillColor(_c.col);
 
-	sf::RectangleShape rect(sf::Vector2f((_c.b - _c.a).Mag(), _c.radius*2.0f));
+	sf::RectangleShape rect(sf::Vector2f((float)(_c.b - _c.a).Mag(), (float)_c.radius*2.0f));
 	rect.setOrigin(rect.getSize().x / 2.0f, rect.getSize().y / 2.0f);
 	rect.setPosition(_c.a + (_c.b - _c.a) * (0.5f));
 	rect.setFillColor(_c.col);
-	rect.setRotation((_c.b - _c.a).Angle());
+	rect.setRotation((float)(_c.b - _c.a).Angle());
 
 	game.wind->draw(circle1);
 	game.wind->draw(circle2);
@@ -600,6 +653,11 @@ void TestPlaneTriangle() {
 	std::cout << (doesInt ? "The Triangle intersects the Plane.": "The Triangle does NOT intersect the Plane.") << std::endl;
 }
 
+/// <summary>
+/// Gets a double from the user in the console
+/// </summary>
+/// <param name="msg"></param>
+/// <returns></returns>
 double InputDouble(std::string msg) {
 
 	std::cout << msg;
@@ -621,6 +679,11 @@ double InputDouble(std::string msg) {
 	return _d;
 }
 
+/// <summary>
+/// Gets a vector 3 from the user in the console
+/// </summary>
+/// <param name="msg"></param>
+/// <returns></returns>
 Vector3 InputVec3(std::string msg) {
 	std::cout << msg << std::endl;
 	double x = InputDouble("double x: ");

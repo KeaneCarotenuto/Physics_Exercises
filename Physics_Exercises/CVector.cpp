@@ -58,26 +58,6 @@ Vector3 Vector3::Zero() {
 	return { 0,0,0 };
 }
 
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="pp">known plane point</param>
-/// <param name="pn">plane normal</param>
-/// <param name="lpa">line point A</param>
-/// <param name="lpb">line point B</param>
-/// <param name="doesIntersect">bool pointer to return result</param>
-/// <returns></returns>
-
-
-/// <summary>
-/// Returns true if given point (p) lies on plane (k n)
-/// </summary>
-/// <param name="p">point to test</param>
-/// <param name="k">known point on plane</param>
-/// <param name="n">normal of plane</param>
-/// <returns></returns>
-
 Vector3 Vector3::Infinity() {
 	return { INFINITY,INFINITY,INFINITY };
 }
@@ -193,7 +173,5 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 			//If not intersecting, return infinity
 			return { INFINITY, INFINITY , INFINITY };
 		}
-
-
 	}
 }

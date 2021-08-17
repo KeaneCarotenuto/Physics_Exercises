@@ -30,28 +30,64 @@ public:
 	double y = 0;
 	double z = 0;
 
+	/// <summary>
+	/// returns as string
+	/// </summary>
+	/// <returns>"(x,y,z)"</returns>
 	std::string ToString();
 
 	Vector3 Normalized();
 
 	double Mag();
 
+	/// <summary>
+	/// World angle
+	/// </summary>
+	/// <returns></returns>
 	double Angle();
 
+	/// <summary>
+	/// If any values are zero
+	/// </summary>
+	/// <returns></returns>
 	bool AnyZero();
 
+	/// <summary>
+	/// If any values are infinite
+	/// </summary>
+	/// <returns></returns>
 	bool AnyInf();
 
+	/// <summary>
+	/// All Zero
+	/// </summary>
+	/// <returns></returns>
 	static Vector3 Zero();
 
+	/// <summary>
+	/// All Infinity
+	/// </summary>
+	/// <returns></returns>
 	static Vector3 Infinity();
 
 	static Vector3 Cross(Vector3 a, Vector3 b);
 
 	static double Dot(Vector3 a, Vector3 b);
 
+	/// <summary>
+	/// The value difference between two vectors
+	/// </summary>
+	/// <param name="a"></param>
+	/// <param name="b"></param>
+	/// <returns></returns>
 	static double Diff(Vector3 a, Vector3 b);
 
+	/// <summary>
+	/// Distance between two points
+	/// </summary>
+	/// <param name="a"></param>
+	/// <param name="b"></param>
+	/// <returns></returns>
 	static double Distance(Vector3 a, Vector3 b);
 
 	/// <summary>
@@ -64,18 +100,36 @@ public:
 	static bool IsPointOnPlane(Vector3 p, Vector3 k, Vector3 n);
 
 	/// <summary>
-	/// 
+	/// Returns a point in space where a line intersects a plane
 	/// </summary>
-	/// <param name="pp">known plane point</param>
-	/// <param name="pn">plane normal</param>
-	/// <param name="lpa">line point A</param>
-	/// <param name="lpb">line point B</param>
-	/// <param name="doesIntersect">bool pointer to return result</param>
+	/// <param name="pp"></param>
+	/// <param name="pn"></param>
+	/// <param name="lpa"></param>
+	/// <param name="lpb"></param>
+	/// <param name="doesIntersect"></param>
 	/// <returns></returns>
 	static Vector3 LineIntersectPlanePoint(Vector3 pp, Vector3 pn, Vector3 lpa, Vector3 lpb, bool* doesIntersect = nullptr);
 
+	/// <summary>
+	/// Returns true if a triangle intersects a plane
+	/// </summary>
+	/// <param name="pp"></param>
+	/// <param name="pn"></param>
+	/// <param name="ta"></param>
+	/// <param name="tb"></param>
+	/// <param name="tc"></param>
+	/// <returns></returns>
 	static bool TriangleIntersectsPlane(Vector3 pp, Vector3 pn, Vector3 ta, Vector3 tb, Vector3 tc);
 
+	/// <summary>
+	/// Returns then line-line intersection point
+	/// </summary>
+	/// <param name="l1p1"></param>
+	/// <param name="l1p2"></param>
+	/// <param name="l2p1"></param>
+	/// <param name="l2p2"></param>
+	/// <param name="isInfinite"></param>
+	/// <returns></returns>
 	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2, bool isInfinite = false);
 
 };
@@ -93,6 +147,12 @@ struct Line {
 		else return true;
 	}
 
+	/// <summary>
+	/// Simple + fast check to see if a point COULD be on the line (Actually checks rect)
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <returns></returns>
 	bool ContainsPoint(double x, double y) {
 		if (std::min(a.x, b.x) <= x && x <= std::max(a.x, b.x) &&
 			std::min(a.y, b.y) <= y && y <= std::max(a.y, b.y))
@@ -100,6 +160,12 @@ struct Line {
 		else return false;
 	}
 
+	/// <summary>
+	/// Returns shortest line
+	/// </summary>
+	/// <param name="_a"></param>
+	/// <param name="_b"></param>
+	/// <returns></returns>
 	static Line Shortest(Line _a, Line _b) {
 		return (fmin(_a.Length(), _b.Length()) == _a.Length() ? _a : _b);
 	}
@@ -119,10 +185,11 @@ struct Triangle {
 };
 
 struct Capsule {
-	Capsule(Vector3 _a, Vector3 _b, double _rad) {
+	Capsule(Vector3 _a, Vector3 _b, double _rad, sf::Color _col) {
 		a = _a;
 		b = _b;
 		radius = _rad;
+		col = _col;
 	}
 
 	Vector3 a = Vector3::Zero();
@@ -136,6 +203,12 @@ struct Capsule {
 		else return true;
 	}
 
+	/// <summary>
+	/// Returns the shortest distance between the two capsules/lines
+	/// </summary>
+	/// <param name="cap1"></param>
+	/// <param name="cap2"></param>
+	/// <returns></returns>
 	static Line ShortestDistanceBetween(Capsule cap1, Capsule cap2) {
 
 		Line lineAA = ShortestPerpLine(cap1, cap2, cap1.a, cap2.a);
@@ -146,6 +219,14 @@ struct Capsule {
 		return Line::Shortest( Line::Shortest(lineAA, lineAB), Line::Shortest(lineBA, lineBB));
 	}
 
+	/// <summary>
+	/// Finds the shortest perpendicular line between two ends of capsules/lines
+	/// </summary>
+	/// <param name="cap1"></param>
+	/// <param name="cap2"></param>
+	/// <param name="cap1End"></param>
+	/// <param name="cap2End"></param>
+	/// <returns></returns>
 	static Line ShortestPerpLine(Capsule cap1, Capsule cap2, Vector3 cap1End, Vector3 cap2End)
 	{
 		Vector3 intPoint = Vector3::LineIntersectsLine(cap1.a, cap1.b, cap2.a, cap2.b, true);
