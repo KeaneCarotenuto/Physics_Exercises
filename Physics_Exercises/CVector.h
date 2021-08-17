@@ -211,6 +211,10 @@ struct Capsule {
 	/// <returns></returns>
 	static Line ShortestDistanceBetween(Capsule cap1, Capsule cap2) {
 
+		Vector3 intPoint = Vector3::LineIntersectsLine(cap1.a, cap1.b, cap2.a, cap2.b);
+
+		if (intPoint != Vector3::Infinity()) return { intPoint, intPoint };
+
 		Line lineAA = ShortestPerpLine(cap1, cap2, cap1.a, cap2.a);
 		Line lineAB = ShortestPerpLine(cap1, cap2, cap1.a, cap2.b);
 		Line lineBA = ShortestPerpLine(cap1, cap2, cap1.b, cap2.a);

@@ -38,7 +38,7 @@ std::string fullInstruct =
 	"[NOTE] PRESS NUMBER KEYS, THEN CHECK CONSOLE\n\n"\
 	"[T] TO CLEAR/START TRIANGLE\n"\
 	"[L] TO CLEAR/START LINE\n"\
-	"[D] TO DIVIDE TRIANGLE BY LINE\n"\
+	"[D] TO DIVIDE TRIANGLE(S) BY LINE\n"\
 	"[C] TO CLEAR/START CAPSULES\n\n"\
 	"[LEFT CLICK] TO CREATE TRIANGLE/LINE/CAPSULES\n"\
 	"[ESC] TO CANCEL SHAPE\n"\
@@ -60,8 +60,8 @@ Line line;
 
 //Two capsules
 std::vector<Capsule*> caps = { 
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Red),
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Blue)
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Color(255,0,0)),
+	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Color(0,0,255))
 };
 
 //FixedUpdate() call rate
