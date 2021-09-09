@@ -15,6 +15,7 @@ void DrawLine(Line _line, sf::Color _col);
 
 void DrawTriangle(Triangle _t);
 
+bool Within(double _val, double min, double max);
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
 
@@ -234,12 +235,37 @@ void Draw() {
 	for (Triangle* _t : tris) {
 		if (!_t->IsValid()) continue;
 
-		sf::Vector2f mousePos = (sf::Vector2f)sf::Mouse::getPosition(*game.wind);
-		float angleA = Vector3::Angle(_t->a - Vector3(mousePos), _t->b - Vector3(mousePos));
-		float angleB = Vector3::Angle(_t->b - Vector3(mousePos), _t->c - Vector3(mousePos));
-		float angleC = Vector3::Angle(_t->c - Vector3(mousePos), _t->a - Vector3(mousePos));
+		Vector3 mousePos = Vector3((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
+		float angleA = Vector3::Angle(_t->a - (mousePos), _t->b - (mousePos));
+		float angleB = Vector3::Angle(_t->b - (mousePos), _t->c - (mousePos));
+		float angleC = Vector3::Angle(_t->c - (mousePos), _t->a - (mousePos));
 
-		if (360.0 - abs((float)(angleA + angleB + angleC)) <= 0.01) {
+		/*if (360.0 - abs((float)(angleA + angleB + angleC)) <= 0.01) {
+			_t->col = sf::Color::Red;
+		}
+		else {
+			_t->col = sf::Color::White;
+		}*/
+
+		Vector3 v0 = _t->b - _t->a;
+		Vector3 v1 = _t->c - _t->a;
+		Vector3 v2 = mousePos - _t->a;
+
+		double d00 = Vector3::Dot(v0, v0);
+		double d01 = Vector3::Dot(v0, v1);
+		double d02 = Vector3::Dot(v0, v2);
+		double d11 = Vector3::Dot(v1, v1);
+		double d12 = Vector3::Dot(v1, v2);
+		double denom = d00 * d11 - d01 * d01;
+		double v = (d11 * d02 - d01 * d12) / denom;
+		double w = (d00 * d12 - d01 * d02) / denom;
+		double u = 1.0f - v - w;
+
+		cprint::Print({5,5}, std::to_wstring(v));
+		cprint::Print({5,6}, std::to_wstring(w));
+		cprint::Print({5,7}, std::to_wstring(u));
+
+		if (Within(v,0,1) && Within(w, 0, 1) && Within(u, 0, 1)) {
 			_t->col = sf::Color::Red;
 		}
 		else {
@@ -327,6 +353,11 @@ void DrawCapsule(Capsule _c)
 	game.wind->draw(circle1);
 	game.wind->draw(circle2);
 	game.wind->draw(rect);
+}
+
+bool Within(double _val, double min, double max) {
+	if (_val >= min && _val <= max) return true;
+	else return false;
 }
 
 /// <summary>
