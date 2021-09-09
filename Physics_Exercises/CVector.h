@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include"CPrint.h"
+
 
 class CVector
 {
@@ -46,6 +48,8 @@ public:
 	/// <returns></returns>
 	double Angle();
 
+	double UnsignedAngle();
+
 	/// <summary>
 	/// If any values are zero
 	/// </summary>
@@ -57,6 +61,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool AnyInf();
+
+	static double Angle(Vector3 _a, Vector3 _b);
 
 	/// <summary>
 	/// All Zero
@@ -73,6 +79,7 @@ public:
 	static Vector3 Cross(Vector3 a, Vector3 b);
 
 	static double Dot(Vector3 a, Vector3 b);
+	static double Det(Vector3 a, Vector3 b);
 
 	/// <summary>
 	/// The value difference between two vectors
@@ -135,8 +142,8 @@ public:
 };
 
 struct Line {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
+	Vector3 a = Vector3::Infinity();
+	Vector3 b = Vector3::Infinity();
 
 	double Length() {
 		return Vector3::Distance(a, b);
@@ -172,15 +179,28 @@ struct Line {
 };
 
 struct Triangle {
-	Vector3 a = Vector3::Zero();
-	Vector3 b = Vector3::Zero();
-	Vector3 c = Vector3::Zero();
+	Vector3 a = Vector3::Infinity();
+	Vector3 b = Vector3::Infinity();
+	Vector3 c = Vector3::Infinity();
 
 	sf::Color col = sf::Color::White;
 
 	bool IsValid() {
 		if (a.AnyInf() || b.AnyInf() || c.AnyInf()) return false;
 		else return true;
+	}
+};
+
+struct RegPolygon {
+	std::vector<Vector3> points;
+
+	sf::Color col = sf::Color::White;
+
+	bool IsValid() {
+		for (Vector3 _point : points) {
+			if (_point.AnyInf()) return false;
+		}
+		return true;
 	}
 };
 

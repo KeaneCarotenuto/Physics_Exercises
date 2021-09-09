@@ -15,13 +15,6 @@ void DrawLine(Line _line, sf::Color _col);
 
 void DrawTriangle(Triangle _t);
 
-void DrawCapsule(Capsule _c);
-
-void TestLagrange();
-void TestPlanePoint();
-void TestPlaneLine();
-void TestPlaneTriangle();
-
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
 
@@ -46,23 +39,12 @@ std::string fullInstruct =
 
 bool freezeMouse = false;
 
-bool makeLine = false;
-
 bool makeTri = false;
-
-bool makeCap = false;
+bool makePoly = false;
 
 //One triangle
-std::vector<Triangle*> tris = { new Triangle() };
-
-//One line
-Line line;
-
-//Two capsules
-std::vector<Capsule*> caps = { 
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Color(255,0,0)),
-	new Capsule(Vector3::Infinity(), Vector3::Infinity(), (double)INFINITY, sf::Color::Color(0,0,255))
-};
+std::vector<Triangle*> tris = {};
+std::vector<RegPolygon*> polys = {};
 
 //FixedUpdate() call rate
 double timeStep = (1.0f / 60.0f);
@@ -141,24 +123,13 @@ int main() {
 			if (newEvent.type == sf::Event::Closed)
 			{
 				window.close();
+				return 0;
 			}
 
 			if (newEvent.type == sf::Event::KeyPressed)
 			{
 				if (newEvent.key.code == sf::Keyboard::Num1) {
-					TestLagrange();
-				}
-
-				if (newEvent.key.code == sf::Keyboard::Num2) {
-					TestPlanePoint();
-				}
-				
-				if (newEvent.key.code == sf::Keyboard::Num3) {
-					TestPlaneLine();
-				}
-				
-				if (newEvent.key.code == sf::Keyboard::Num4) {
-					TestPlaneTriangle();
+					
 				}
 
 				if (newEvent.key.code == sf::Keyboard::Key::Tab) {
@@ -194,157 +165,33 @@ void ToggleControls()
 int FixedUpdate() {
 	//Esc to reset
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-		if (makeLine) {
-			makeLine = false;
-
-			line.a = Vector3::Infinity();
-			line.b = Vector3::Infinity();
-		}
-
 		if (makeTri) {
 			makeTri = false;
 
-			tris[0]->a = Vector3::Infinity();
-			tris[0]->b = Vector3::Infinity();
-			tris[0]->c = Vector3::Infinity();
-		}
-
-		if (makeCap) {
-			makeCap = false;
-
-			caps[0]->a = Vector3::Infinity();
-			caps[0]->b = Vector3::Infinity();
-			caps[0]->radius = (double)INFINITY;
-			
-			caps[1]->a = Vector3::Infinity();
-			caps[1]->b = Vector3::Infinity();
-			caps[1]->radius = (double)INFINITY;
+			delete tris.back();
+			tris.pop_back();
 		}
 	}
 
-	//Start making line
-	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
-		makeLine = true;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+		makeTri = false;
+		makePoly = false;
 
-		line.a = Vector3::Infinity();
-		line.b = Vector3::Infinity();
+		for (Triangle* _t : tris) {
+			delete _t;
+		}
+		tris.clear();
 	}
 
 	//Start making triangle
-	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+	if (!makeTri && !makePoly && sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
 		makeTri = true;
 
-		tris[0]->a = Vector3::Infinity();
-		tris[0]->b = Vector3::Infinity();
-		tris[0]->c = Vector3::Infinity();
-	}
+		tris.push_back(new Triangle());
 
-	//Start making capsules
-	if (!makeTri && !makeLine && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
-		makeCap = true;
-
-		caps[0]->a = Vector3::Infinity();
-		caps[0]->b = Vector3::Infinity();
-		caps[0]->radius = (double)INFINITY;
-
-		caps[1]->a = Vector3::Infinity();
-		caps[1]->b = Vector3::Infinity();
-		caps[1]->radius = (double)INFINITY;
-	}
-
-	//Try ivide triangle by line
-	if (!makeTri && !makeLine && line.IsValid() && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		std::vector<Triangle*> toAdd;
-
-		for (Triangle* _t : tris) {
-			if (!_t->IsValid()) continue;
-
-			//Find all intersections
-			Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, _t->a, _t->b);
-			Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, _t->b, _t->c);
-			Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, _t->c, _t->a);
-
-			//Count intersections
-			int count = 0;
-			if (!intA.AnyInf()) count++;
-			if (!intB.AnyInf()) count++;
-			if (!intC.AnyInf()) count++;
-
-			//Only divide if enough intersections
-			if (count == 0 || count == 1) continue;
-
-			//Make new triangles
-			Triangle* t1 = new Triangle();
-			Triangle* t2 = new Triangle();
-			Triangle* t3 = new Triangle();
-
-			//Determine how the triangle must be cut
-			if (intA.AnyInf()) {
-
-				t1->c = _t->c;
-				t1->a = intC;
-				t1->b = intB;
-
-				t2->c = intC;
-				t2->a = _t->a;
-				t2->b = _t->b;
-
-				t3->c = intC;
-				t3->a = _t->b;
-				t3->b = intB;
-			}
-			else if (intB.AnyInf()) {
-
-				t1->a = _t->a;
-				t1->b = intA;
-				t1->c = intC;
-
-				t2->a = intA;
-				t2->b = _t->b;
-				t2->c = _t->c;
-
-				t3->a = intA;
-				t3->b = _t->c;
-				t3->c = intC;
-			}
-			else if (intC.AnyInf()) {
-				
-
-				t1->b = _t->b;
-				t1->c = intB;
-				t1->a = intA;
-
-				t2->b = intB;
-				t2->c = _t->c;
-				t2->a = _t->a;
-
-				t3->b = intB;
-				t3->c = _t->a;
-				t3->a = intA;
-			}
-
-			//Add new triangles
-			toAdd.push_back(t1);
-			toAdd.push_back(t2);
-			toAdd.push_back(t3);
-
-			//clear old tri
-			_t->b = Vector3::Infinity();
-			_t->c = Vector3::Infinity();
-			_t->a = Vector3::Infinity();
-		}
-
-		//Actually add new tris
-		for (Triangle* _t : toAdd) {
-			_t->col = sf::Color::Color(rand() % 255, rand() % 255, rand() % 255);
-			tris.push_back(_t);
-		}
-
-		toAdd.clear();
-		
-		//Clear line
-		line.a = Vector3::Infinity();
-		line.b = Vector3::Infinity();
+		tris.back()->a = Vector3::Infinity();
+		tris.back()->b = Vector3::Infinity();
+		tris.back()->c = Vector3::Infinity();
 	}
 
 	//Creating shapes (Line, Triangle, Capsules)
@@ -354,65 +201,26 @@ int FixedUpdate() {
 		if (!freezeMouse) {
 			freezeMouse = true;
 
-			if (makeLine) {
-				if (line.a == Vector3::Infinity()) {
-					line.a = (Vector3)pos;
+			if (makeTri) {
+				if (tris.back()->a == Vector3::Infinity()) {
+					tris.back()->a = (Vector3)pos;
 				}
-				else if (line.b == Vector3::Infinity()) {
-					line.b = (Vector3)pos;
-					makeLine = false;
+				else if (tris.back()->b == Vector3::Infinity()) {
+					tris.back()->b = (Vector3)pos;
 				}
-				else {
-					makeLine = false;
-				}
-			} 
-			else if (makeTri) {
-				if (tris[0]->a == Vector3::Infinity()) {
-					tris[0]->a = (Vector3)pos;
-				}
-				else if (tris[0]->b == Vector3::Infinity()) {
-					tris[0]->b = (Vector3)pos;
-				}
-				else if (tris[0]->c == Vector3::Infinity()) {
-					tris[0]->c = (Vector3)pos;
-					tris[0]->col = sf::Color::White;
+				else if (tris.back()->c == Vector3::Infinity()) {
+					tris.back()->c = (Vector3)pos;
+					tris.back()->col = sf::Color::White;
 					makeTri = false;
 				}
 				else {
 					makeTri = false;
-				}
-			}
-			else if (makeCap) {
-				if (caps[0]->a == Vector3::Infinity()) {
-					caps[0]->a = (Vector3)pos;
-				}
-				else if (caps[1]->radius == (double)INFINITY) {
-					caps[0]->radius = (caps[0]->a - (Vector3)pos).Mag();
-					caps[1]->radius = caps[0]->radius;
-				}
-				else if (caps[0]->b == Vector3::Infinity()) {
-					caps[0]->b = (Vector3)pos;
-				}
-				else if (caps[1]->a == Vector3::Infinity()) {
-					caps[1]->a = (Vector3)pos;
-				}
-				else if (caps[1]->b == Vector3::Infinity()) {
-					caps[1]->b = (Vector3)pos;
-					makeCap = false;
-				}
-				else {
-					makeCap = false;
 				}
 			}
 		}
 	}
 	else {
 		if (freezeMouse) freezeMouse = false;
-	}
-
-	//Update rad dynamically after first click when making capsules
-	if (makeCap && caps[0]->a != Vector3::Infinity() && caps[1]->radius == (double)INFINITY) {
-		caps[0]->radius = (caps[0]->a - (Vector3)sf::Mouse::getPosition(*game.wind)).Mag();
 	}
 	
 
@@ -422,55 +230,23 @@ int FixedUpdate() {
 void Draw() {
 	game.wind->clear();
 
-	DrawCapsule(*caps[0]);
-	DrawCapsule(*caps[1]);
-
-	//Draw cap shortest line
-	DrawLine(Capsule::ShortestDistanceBetween(*caps[0], *caps[1]), sf::Color::White);
-
-	//Draw basic triangle
-	if (!makeTri) {
-		DrawTriangle(*tris[0]);
-	}
-
 	//Draw all other triangles + intersections with line
 	for (Triangle* _t : tris) {
+		if (!_t->IsValid()) continue;
+
+		sf::Vector2f mousePos = (sf::Vector2f)sf::Mouse::getPosition(*game.wind);
+		float angleA = Vector3::Angle(_t->a - Vector3(mousePos), _t->b - Vector3(mousePos));
+		float angleB = Vector3::Angle(_t->b - Vector3(mousePos), _t->c - Vector3(mousePos));
+		float angleC = Vector3::Angle(_t->c - Vector3(mousePos), _t->a - Vector3(mousePos));
+
+		if (360.0 - abs((float)(angleA + angleB + angleC)) <= 0.01) {
+			_t->col = sf::Color::Red;
+		}
+		else {
+			_t->col = sf::Color::White;
+		}
+
 		DrawTriangle(*_t);
-
-		Vector3 intA = Vector3::LineIntersectsLine(line.a, line.b, _t->a, _t->b);
-		Vector3 intB = Vector3::LineIntersectsLine(line.a, line.b, _t->b, _t->c);
-		Vector3 intC = Vector3::LineIntersectsLine(line.a, line.b, _t->c, _t->a);
-
-		sf::CircleShape c;
-		c.setFillColor(sf::Color::Red);
-		c.setRadius(5.0f);
-		c.setOrigin(5.0f, 5.0f);
-
-		if (!intA.AnyInf()) {
-			c.setPosition((sf::Vector2f)intA);
-			game.wind->draw(c);
-		}
-		if (!intB.AnyInf()) {
-			c.setPosition((sf::Vector2f)intB);
-			game.wind->draw(c);
-		}
-		if (!intC.AnyInf()) {
-			c.setPosition((sf::Vector2f)intC);
-			game.wind->draw(c);
-		}
-	}
-
-	if (makeLine) {
-		sf::CircleShape c;
-		c.setFillColor(sf::Color::Red);
-		c.setRadius(5.0f);
-		c.setOrigin(5.0f, 5.0f);
-		
-
-		if (line.a != Vector3::Infinity()) {
-			c.setPosition((sf::Vector2f)line.a);
-			game.wind->draw(c);
-		}
 	}
 	
 	if (makeTri) {
@@ -480,28 +256,24 @@ void Draw() {
 		c.setOrigin(5.0f, 5.0f);
 
 
-		if (tris[0]->a != Vector3::Infinity()) {
-			c.setPosition((sf::Vector2f)tris[0]->a);
+		if (tris.back()->a != Vector3::Infinity()) {
+			c.setPosition((sf::Vector2f)tris.back()->a);
 			game.wind->draw(c);
 		}
-		if (tris[0]->b != Vector3::Infinity()) {
-			c.setPosition((sf::Vector2f)tris[0]->b);
+		if (tris.back()->b != Vector3::Infinity()) {
+			c.setPosition((sf::Vector2f)tris.back()->b);
 			game.wind->draw(c);
 		}
 	}
 
 	//Draw dot on cursor to show clicks are needed
-	if (makeLine || makeTri || makeCap) {
+	if (makeTri || makePoly) {
 		sf::CircleShape c;
 		c.setFillColor(sf::Color::Red);
 		c.setRadius(5.0f);
 		c.setOrigin(5.0f, 5.0f);
 		c.setPosition((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
 		game.wind->draw(c);
-	}
-
-	if (!makeLine) {
-		DrawLine(line, sf::Color::Red);
 	}
 
 	game.wind->draw(instructions);
@@ -534,7 +306,7 @@ void DrawTriangle(Triangle _t)
 	game.wind->draw(Tlines);
 }
 
-void DrawCapsule(Capsule _c) 
+void DrawCapsule(Capsule _c)
 {
 	sf::CircleShape circle1((float)_c.radius);
 	circle1.setOrigin((float)_c.radius, (float)_c.radius);
@@ -546,7 +318,7 @@ void DrawCapsule(Capsule _c)
 	circle2.setPosition(_c.b);
 	circle2.setFillColor(_c.col);
 
-	sf::RectangleShape rect(sf::Vector2f((float)(_c.b - _c.a).Mag(), (float)_c.radius*2.0f));
+	sf::RectangleShape rect(sf::Vector2f((float)(_c.b - _c.a).Mag(), (float)_c.radius * 2.0f));
 	rect.setOrigin(rect.getSize().x / 2.0f, rect.getSize().y / 2.0f);
 	rect.setPosition(_c.a + (_c.b - _c.a) * (0.5f));
 	rect.setFillColor(_c.col);
@@ -555,102 +327,6 @@ void DrawCapsule(Capsule _c)
 	game.wind->draw(circle1);
 	game.wind->draw(circle2);
 	game.wind->draw(rect);
-}
-
-void TestLagrange() {
-	system("CLS");
-	std::cout << "-Lagrange's Formula-" << std::endl << std::endl;
-
-	Vector3 a = InputVec3("Enter vec A");
-	std::cout << std::endl;
-
-	Vector3 b = InputVec3("Enter vec B");
-	std::cout << std::endl;
-
-	Vector3 c = InputVec3("Enter vec C");
-	std::cout << std::endl;
-
-	Vector3 LHS = Vector3::Cross(a, Vector3::Cross(b, c));
-	Vector3 RHS = b * Vector3::Dot(a, c) - c * Vector3::Dot(a, b);
-	double diff = Vector3::Diff(LHS, RHS);
-
-	std::cout << "A: " << a.ToString() << std::endl;
-	std::cout << "B: " << b.ToString() << std::endl;
-	std::cout << "C: " << c.ToString() << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "LHS: " << LHS.ToString() << std::endl;
-	std::cout << "RHS: " << RHS.ToString() << std::endl;
-	std::cout << "Diff: " << diff << std::endl;
-	std::cout << (diff <= 0.001 ? "They are Equal." : "They are NOT Equal.") << std::endl;
-}
-
-void TestPlanePoint() {
-	system("CLS");
-	std::cout << "-Plane vs Point Function-" << std::endl << std::endl;
-
-	Vector3 k = InputVec3("Enter Point on Plane (k)");
-	std::cout << std::endl;
-
-	Vector3 n = InputVec3("Enter Plane Normal (n)");
-	std::cout << std::endl;
-
-	Vector3 p = InputVec3("Enter Point to Test (p)");
-	std::cout << std::endl;
-
-	double dot = Vector3::Dot(p - k, n);
-
-	std::cout << "Dot: " << dot;
-
-	std::cout << std::endl;
-
-	std::cout << (Vector3::IsPointOnPlane(p, k, n) ? "The Point lies on the Plane." : "They Point does NOT lie on the Plane, " + (std::string)(dot > 0.0f ? "it is infront." : "it is hehind.")) << std::endl;
-}
-
-void TestPlaneLine() {
-	system("CLS");
-	std::cout << "-Line Segment vs Plane Function-" << std::endl << std::endl;
-
-	Vector3 pp = InputVec3("Enter Point on Plane (k)");
-	std::cout << std::endl;
-
-	Vector3 pn = InputVec3("Enter Plane Normal (n)");
-	std::cout << std::endl;
-
-	Vector3 lpa = InputVec3("Enter Line point (a)");
-	std::cout << std::endl;
-
-	Vector3 lpb = InputVec3("Enter Line point (b)");
-	std::cout << std::endl;
-
-	bool doesInt = false;
-	Vector3 intersectPoint = Vector3::LineIntersectPlanePoint(pp, pn, lpa, lpb, &doesInt);
-
-	std::cout << (doesInt ? "The Line intersects the Plane at point I: " + intersectPoint.ToString() : "They Line does NOT intersect the Plane") << std::endl;
-}
-
-void TestPlaneTriangle() {
-	system("CLS");
-	std::cout << "-Triangle vs Plane Function-" << std::endl << std::endl;
-
-	Vector3 pp = InputVec3("Enter Point on Plane (k)");
-	std::cout << std::endl;
-
-	Vector3 pn = InputVec3("Enter Plane Normal (n)");
-	std::cout << std::endl;
-
-	Vector3 ta = InputVec3("Enter Triangle point (a)");
-	std::cout << std::endl;
-
-	Vector3 tb = InputVec3("Enter Triangle point (b)");
-	std::cout << std::endl;
-
-	Vector3 tc = InputVec3("Enter Triangle point (c)");
-	std::cout << std::endl;
-
-	bool doesInt = Vector3::TriangleIntersectsPlane(pp, pn, ta, tb, tc);
-
-	std::cout << (doesInt ? "The Triangle intersects the Plane.": "The Triangle does NOT intersect the Plane.") << std::endl;
 }
 
 /// <summary>

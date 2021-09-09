@@ -36,7 +36,23 @@ double Vector3::Mag() {
 
 double Vector3::Angle()
 {
-	return atan(y / x) / (2 * M_PI) * 360;
+	return atan2(y, x) / (M_PI) * 180;
+}
+
+double Vector3::Angle(Vector3 _a, Vector3 _b)
+{
+	double dot = _a.x * _b.x + _a.y * _b.y;
+	double det = _a.x * _b.y - _a.y * _b.x;
+	double angle = atan2(det, dot) / (M_PI) * 180;
+
+	return angle;
+}
+
+double Vector3::UnsignedAngle()
+{
+	double angle = Angle();
+	if (angle < 0) angle = 360 + angle;
+	return angle;
 }
 
 Vector3 Vector3::Normalized() {
@@ -78,6 +94,13 @@ double Vector3::Dot(Vector3 a, Vector3 b) {
 	result += a.x * b.x;
 	result += a.y * b.y;
 	result += a.z * b.z;
+
+	return result;
+}
+
+double Vector3::Det(Vector3 a, Vector3 b) {
+	
+	double result = a.x * b.y - a.y * b.x;
 
 	return result;
 }
