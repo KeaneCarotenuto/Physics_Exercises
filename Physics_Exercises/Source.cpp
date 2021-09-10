@@ -25,16 +25,14 @@ sf::Font font;
 sf::Text instructions;
 std::string defaultInstruct = "[TAB] TO OPEN AND CLOSE CONTROLS\n";
 std::string fullInstruct =	
-	"[1] TO TEST LAGRANGE'S FORMULA\n"\
-	"[2] TO TEST PLANE VS POINT FUNCTION\n"\
-	"[3] TO TEST LINE SEGMENT VS PLANE FUNCTION\n"\
-	"[4] TO TEST TRIANGLE VS PLANE FUNCTION\n"\
-	"[NOTE] PRESS NUMBER KEYS, THEN CHECK CONSOLE\n\n"\
+	"[1] TO TEST ANGLE POINT IN TRIANGLE\n"\
+	"[2] TO TEST BARYCENTRIC POINT IN TRIANGLE\n"\
+	"[NOTE] PRESS NUMBER KEYS, THEN CHECK CONSOLE FOR READOUTS\n\n"\
 	"[T] TO CLEAR/START TRIANGLE\n"\
-	"[L] TO CLEAR/START LINE\n"\
-	"[D] TO DIVIDE TRIANGLE(S) BY LINE\n"\
-	"[C] TO CLEAR/START CAPSULES\n\n"\
-	"[LEFT CLICK] TO CREATE TRIANGLE/LINE/CAPSULES\n"\
+	"[P] TO CLEAR/START POLYGON\n"\
+	"[R] TO CLEAR/RESTART ALL\n\n"\
+	"[LEFT CLICK] TO CREATE TRIANGLE/POLYGON POINT\n"\
+	"[RIGHT CLICK] TO FINISH POLYGON\n"\
 	"[ESC] TO CANCEL SHAPE\n"\
 	"[TAB] TO OPEN AND CLOSE CONTROLS\n";
 
@@ -42,6 +40,8 @@ bool freezeMouse = false;
 
 bool makeTri = false;
 bool makePoly = false;
+
+bool doBarry = false;
 
 //One triangle
 std::vector<Triangle*> tris = {};
@@ -130,7 +130,11 @@ int main() {
 			if (newEvent.type == sf::Event::KeyPressed)
 			{
 				if (newEvent.key.code == sf::Keyboard::Num1) {
-					
+					doBarry = false;
+				}
+				
+				if (newEvent.key.code == sf::Keyboard::Num2) {
+					doBarry = true;
 				}
 
 				if (newEvent.key.code == sf::Keyboard::Key::Tab) {
@@ -236,41 +240,12 @@ void Draw() {
 		if (!_t->IsValid()) continue;
 
 		Vector3 mousePos = Vector3((sf::Vector2f)sf::Mouse::getPosition(*game.wind));
-		float angleA = Vector3::Angle(_t->a - (mousePos), _t->b - (mousePos));
-		float angleB = Vector3::Angle(_t->b - (mousePos), _t->c - (mousePos));
-		float angleC = Vector3::Angle(_t->c - (mousePos), _t->a - (mousePos));
 
-		/*if (360.0 - abs((float)(angleA + angleB + angleC)) <= 0.01) {
-			_t->col = sf::Color::Red;
-		}
-		else {
-			_t->col = sf::Color::White;
-		}*/
+		_t->col = sf::Color::White;
 
-		Vector3 v0 = _t->b - _t->a;
-		Vector3 v1 = _t->c - _t->a;
-		Vector3 v2 = mousePos - _t->a;
-
-		double d00 = Vector3::Dot(v0, v0);
-		double d01 = Vector3::Dot(v0, v1);
-		double d02 = Vector3::Dot(v0, v2);
-		double d11 = Vector3::Dot(v1, v1);
-		double d12 = Vector3::Dot(v1, v2);
-		double denom = d00 * d11 - d01 * d01;
-		double v = (d11 * d02 - d01 * d12) / denom;
-		double w = (d00 * d12 - d01 * d02) / denom;
-		double u = 1.0f - v - w;
-
-		cprint::Print({5,5}, std::to_wstring(v));
-		cprint::Print({5,6}, std::to_wstring(w));
-		cprint::Print({5,7}, std::to_wstring(u));
-
-		if (Within(v,0,1) && Within(w, 0, 1) && Within(u, 0, 1)) {
-			_t->col = sf::Color::Red;
-		}
-		else {
-			_t->col = sf::Color::White;
-		}
+		//Bary + Angle checks
+		if (doBarry && _t->BaryPoint(mousePos, true)) _t->col = sf::Color::Red;
+		else if (_t->AnglePoint(mousePos, true)) _t->col = sf::Color::Red;
 
 		DrawTriangle(*_t);
 	}

@@ -198,3 +198,38 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 		}
 	}
 }
+
+bool Triangle::AnglePoint(Vector3 _p, bool print)
+{
+	float angleA = Vector3::Angle(a - _p, b - _p);
+	float angleB = Vector3::Angle(b - _p, c - _p);
+	float angleC = Vector3::Angle(c - _p, a - _p);
+
+	if (print) {
+		cprint::Print({ 5,5 }, L"A: " + std::to_wstring(angleA));
+		cprint::Print({ 5,6 }, L"B: " + std::to_wstring(angleB));
+		cprint::Print({ 5,7 }, L"C: " + std::to_wstring(angleC));
+	}
+	
+	return 360.0 - abs((float)(angleA + angleB + angleC)) <= 0.01;
+}
+
+bool Triangle::BaryPoint(Vector3 _p, bool print)
+{
+	double s1 = c.y - a.y;
+	double s2 = c.x - a.x;
+	double s3 = b.y - a.y;
+	double s4 = _p.y - a.y;
+
+	double w = (a.x * s1 + s4 * s2 - _p.x * s1) / (s3 * s2 - (b.x - a.x) * s1);
+	double v = (s4 - w * s3) / s1;
+	double u = 1.0f - w - v;
+
+	if (print) {
+		cprint::Print({ 5,5 }, L"A: " + std::to_wstring(1.0f - w - v));
+		cprint::Print({ 5,6 }, L"B: " + std::to_wstring(w));
+		cprint::Print({ 5,7 }, L"C: " + std::to_wstring(v));
+	}
+
+	return w >= 0 && v >= 0 && (w + v) <= 1;
+}

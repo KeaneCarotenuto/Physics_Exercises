@@ -138,7 +138,6 @@ public:
 	/// <param name="isInfinite"></param>
 	/// <returns></returns>
 	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2, bool isInfinite = false);
-
 };
 
 struct Line {
@@ -189,6 +188,10 @@ struct Triangle {
 		if (a.AnyInf() || b.AnyInf() || c.AnyInf()) return false;
 		else return true;
 	}
+
+
+	bool AnglePoint(Vector3 _p, bool print = false);
+	bool BaryPoint(Vector3 _p, bool print = false);
 };
 
 struct RegPolygon {
