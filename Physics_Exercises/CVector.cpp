@@ -233,3 +233,56 @@ bool Triangle::BaryPoint(Vector3 _p, bool print)
 
 	return w >= 0 && v >= 0 && (w + v) <= 1;
 }
+
+
+bool RegPolygon::intersect(RegPolygon* a, RegPolygon* b, std::vector<Vector3>* points)
+{
+	// loop over the vertices(-> edges -> axis) of the first polygon
+	for (int i = 0; i < a->points.size() + 0; ++i) {
+		// calculate the normal vector of the current edge
+		// this is the axis will we check in this loop
+		Vector3 current = a->points[i];
+		Vector3 next = a->points[(i + 1) % a->points.size()];
+		Vector3 edge = next - current;
+
+		Vector3 axis = Vector3::Zero();
+		axis.x = -edge.y;
+		axis.y = edge.x;
+
+		// loop over all vertices of both polygons and project them
+		// onto the axis. We are only interested in max/min projections
+		double aMaxProj = -std::numeric_limits<double>::infinity();
+		double aMinProj = std::numeric_limits<double>::infinity();
+		double bMaxProj = -std::numeric_limits<double>::infinity();
+		double bMinProj = std::numeric_limits<double>::infinity();
+		for (Vector3 v : a->points) {
+			double proj = Vector3::Dot(axis, v);
+			if (proj < aMinProj) aMinProj = proj;
+			if (proj > aMaxProj) aMaxProj = proj;
+		}
+
+		for (Vector3 v : b->points) {
+			double proj = Vector3::Dot(axis, v);
+			if (proj < bMinProj) bMinProj = proj;
+			if (proj > bMaxProj) bMaxProj = proj;
+		}
+
+		if (points) {
+			points->push_back(current);
+			points->push_back(next);
+			points->push_back(edge);
+			points->push_back(axis);
+		}
+
+		// now check if the intervals the both polygons projected on the
+		// axis overlap. If they don't, we have found an axis of separation and
+		// the given polygons cannot overlap
+		if (aMaxProj < bMinProj || aMinProj > bMaxProj) {
+			return true;
+		}
+	}
+
+	// at this point, we have checked all axis but found no separating axis
+	// which means that the polygons must intersect.
+	return false;
+}

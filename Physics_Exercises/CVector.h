@@ -200,11 +200,15 @@ struct RegPolygon {
 	sf::Color col = sf::Color::White;
 
 	bool IsValid() {
+		if (points.size() <= 0) return false;
+
 		for (Vector3 _point : points) {
 			if (_point.AnyInf()) return false;
 		}
 		return true;
 	}
+
+	static bool intersect(RegPolygon* a, RegPolygon* b, std::vector<Vector3>* points = nullptr);
 };
 
 struct Capsule {

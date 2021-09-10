@@ -14,6 +14,7 @@ void Draw();
 void DrawLine(Line _line, sf::Color _col);
 
 void DrawTriangle(Triangle _t);
+void DrawPoly(RegPolygon _p);
 
 bool Within(double _val, double min, double max);
 double InputDouble(std::string msg);
@@ -186,6 +187,11 @@ int FixedUpdate() {
 			delete _t;
 		}
 		tris.clear();
+
+		for (RegPolygon* _p : polys) {
+			delete _p;
+		}
+		polys.clear();
 	}
 
 	//Start making triangle
@@ -197,6 +203,13 @@ int FixedUpdate() {
 		tris.back()->a = Vector3::Infinity();
 		tris.back()->b = Vector3::Infinity();
 		tris.back()->c = Vector3::Infinity();
+	}
+
+	//Start making poly
+	if (!makeTri && !makePoly && sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
+		makePoly = true;
+
+		polys.push_back(new RegPolygon());
 	}
 
 	//Creating shapes (Line, Triangle, Capsules)
@@ -222,10 +235,20 @@ int FixedUpdate() {
 					makeTri = false;
 				}
 			}
+			else if (makePoly) {
+				polys.back()->points.push_back((Vector3)pos);
+			}
 		}
 	}
 	else {
 		if (freezeMouse) freezeMouse = false;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+		if (makePoly) {
+			makePoly = false;
+			polys.back()->col = sf::Color::White;
+		}
 	}
 	
 
@@ -235,7 +258,7 @@ int FixedUpdate() {
 void Draw() {
 	game.wind->clear();
 
-	//Draw all other triangles + intersections with line
+	//Draw all triangles
 	for (Triangle* _t : tris) {
 		if (!_t->IsValid()) continue;
 
@@ -248,6 +271,32 @@ void Draw() {
 		else if (_t->AnglePoint(mousePos, true)) _t->col = sf::Color::Red;
 
 		DrawTriangle(*_t);
+	}
+
+	if (!makePoly && polys.size() == 2) {
+		std::vector<Vector3>* points = new std::vector<Vector3>();
+		points->clear();
+
+		bool outcome = !RegPolygon::intersect(polys[0], polys[1], points);
+
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::Red);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+
+		for (const Vector3& _p : *points) {
+			c.setPosition((sf::Vector2f)_p);
+			game.wind->draw(c);
+		}
+
+		cprint::Print({ 5,10 }, L"INT: " + (std::wstring)(outcome ? L"YES" : L"NO"));
+	}
+
+	//Draw all polygons
+	for (RegPolygon* _p : polys) {
+		if (!_p->IsValid()) continue;
+
+		DrawPoly(*_p);
 	}
 	
 	if (makeTri) {
@@ -263,6 +312,20 @@ void Draw() {
 		}
 		if (tris.back()->b != Vector3::Infinity()) {
 			c.setPosition((sf::Vector2f)tris.back()->b);
+			game.wind->draw(c);
+		}
+	}
+
+	if (makePoly) {
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::Red);
+		c.setRadius(5.0f);
+		c.setOrigin(5.0f, 5.0f);
+
+
+		for (Vector3 _point : polys.back()->points)
+		{
+			c.setPosition((sf::Vector2f)_point);
 			game.wind->draw(c);
 		}
 	}
@@ -305,6 +368,20 @@ void DrawTriangle(Triangle _t)
 	Tlines[2].color = _t.col;
 
 	game.wind->draw(Tlines);
+}
+
+void DrawPoly(RegPolygon _p)
+{
+	sf::VertexArray Plines(sf::LineStrip, _p.points.size() + 1);
+
+	for (int i = 0; i < _p.points.size() + 0; ++i) {
+		Plines[i].position = (sf::Vector2f)_p.points[i];
+		Plines[i].color = _p.col;
+	}
+	Plines[_p.points.size()].position = (sf::Vector2f)_p.points[0];
+	Plines[_p.points.size()].color = _p.col;
+
+	game.wind->draw(Plines);
 }
 
 void DrawCapsule(Capsule _c)
