@@ -428,13 +428,17 @@ void TestCannon() {
 	double dp = InputDouble("Enter desired DP: ");
 	bool* passed = new bool(true);
 
-	std::cout << std::fixed << std::setprecision((int)dp) << "Angle: " << Vector3::FindCannonAngle(l, v, P, dp, 1000, passed) / (M_PI) * 180 << " degrees\n";
+	if (P.Mag() <= l) {
+		std::cout << "\nWanring, Length of barrel equals/exceeds point to hit. May encounter strange results.\n";
+	}
+
+	std::cout << std::fixed << std::setprecision((int)dp) << "Angle: " << fmod(Vector3::FindCannonAngle(l, v, P, dp, 1000, passed) / (M_PI) * 180, 360) << " degrees\n";
 	if (*passed == true) {
 		std::cout << "Completed.\n";
 	}
 	else
 	{
-		std::cout << "Failed.\n";
+		std::cout << "Cannot Reach.\n";
 	}
 
 	system("pause");
