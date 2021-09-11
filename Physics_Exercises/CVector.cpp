@@ -199,6 +199,47 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 	}
 }
 
+double Vector3::FindCannonAngle(double l, double v, Vector3 P, int dp, int maxTries, bool* passed)
+{
+	double g = -9.81;
+	double theta = 0;
+	double result = 0;
+
+	bool up = true;
+	double inc = 1;
+
+	int count = 0;
+
+	while (true) {
+		count++;
+		double t = (P.x - l * cos(theta))/(v*cos(theta));
+		result = (l + t * v) * sin(theta) - ((g * t * t) / (2.0));
+
+		if (count >= maxTries) {
+			if (passed) *passed = false;
+			return theta;
+		}
+		if (abs(result - P.y) <= 1.0 / pow(10, dp + 2)) {
+			if (passed) *passed = true;
+			return theta;
+		}
+		else if (result < P.y) {
+			if (!up) {
+				up = true;
+				inc *= 0.5;
+			}
+			theta += inc * (M_PI) / 180;
+		}
+		else if (result > P.y) {
+			if (up) {
+				up = false;
+				inc *= 0.5;
+			}
+			theta -= inc * (M_PI) / 180;
+		}
+	}
+}
+
 bool Triangle::AnglePoint(Vector3 _p, bool print)
 {
 	float angleA = Vector3::Angle(a - _p, b - _p);

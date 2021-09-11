@@ -16,6 +16,8 @@ void DrawLine(Line _line, sf::Color _col);
 void DrawTriangle(Triangle _t);
 void DrawPoly(RegPolygon _p);
 
+void TestCannon();
+
 bool Within(double _val, double min, double max);
 double InputDouble(std::string msg);
 Vector3 InputVec3(std::string msg);
@@ -28,6 +30,8 @@ std::string defaultInstruct = "[TAB] TO OPEN AND CLOSE CONTROLS\n";
 std::string fullInstruct =	
 	"[1] TO TEST ANGLE POINT IN TRIANGLE\n"\
 	"[2] TO TEST BARYCENTRIC POINT IN TRIANGLE\n"\
+	"[3] TO TEST JAVELIN THROW\n"\
+	"[4] TO TEST CANNON ANGLE\n"\
 	"[NOTE] PRESS NUMBER KEYS, THEN CHECK CONSOLE FOR READOUTS\n\n"\
 	"[T] TO CLEAR/START TRIANGLE\n"\
 	"[P] TO CLEAR/START POLYGON\n"\
@@ -136,6 +140,14 @@ int main() {
 				
 				if (newEvent.key.code == sf::Keyboard::Num2) {
 					doBarry = true;
+				}
+
+				if (newEvent.key.code == sf::Keyboard::Key::Num3) {
+
+				}
+
+				if (newEvent.key.code == sf::Keyboard::Key::Num4) {
+					TestCannon();
 				}
 
 				if (newEvent.key.code == sf::Keyboard::Key::Tab) {
@@ -405,6 +417,29 @@ void DrawCapsule(Capsule _c)
 	game.wind->draw(circle1);
 	game.wind->draw(circle2);
 	game.wind->draw(rect);
+}
+
+void TestCannon() {
+	system("CLS");
+
+	double l = InputDouble("Enter Length: ");
+	double v = InputDouble("Enter Velocity Mag: ");
+	Vector3 P = InputVec3("Enter Desired Point to hit (z value is ignored): ");
+	double dp = InputDouble("Enter desired DP: ");
+	bool* passed = new bool(true);
+
+	std::cout << std::fixed << std::setprecision((int)dp) << "Angle: " << Vector3::FindCannonAngle(l, v, P, dp, 1000, passed) / (M_PI) * 180 << " degrees\n";
+	if (*passed == true) {
+		std::cout << "Completed.\n";
+	}
+	else
+	{
+		std::cout << "Failed.\n";
+	}
+
+	system("pause");
+
+	system("CLS");
 }
 
 bool Within(double _val, double min, double max) {

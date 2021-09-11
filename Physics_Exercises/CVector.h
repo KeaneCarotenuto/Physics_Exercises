@@ -4,6 +4,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <iomanip>
 
 #include"CPrint.h"
 
@@ -138,6 +139,8 @@ public:
 	/// <param name="isInfinite"></param>
 	/// <returns></returns>
 	static Vector3 LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Vector3 l2p2, bool isInfinite = false);
+
+	static double FindCannonAngle(double l, double v, Vector3 P, int dp = 5, int maxTries = 1000, bool* passed = nullptr);
 };
 
 struct Line {
