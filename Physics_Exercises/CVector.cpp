@@ -205,7 +205,7 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 /// But I honestly do NOT want to solve the following:
 /// "(l + (P.x - l * cos(theta))/(v*cos(theta)) * v) * sin(theta) - ((g * (P.x - l * cos(theta))/(v*cos(theta)) * (P.x - l * cos(theta))/(v*cos(theta))) / (2.0))"
 /// for theta....
-/// Seems like a huge amount of work for not much og a grade.
+/// Seems like a huge amount of work for not much of a grade.
 /// So the following simply uses guess and check, and does it pretty well.
 /// </summary>
 /// <param name="l"></param>
@@ -256,6 +256,30 @@ double Vector3::FindCannonAngle(double l, double v, Vector3 P, int dp, int maxTr
 			theta -= inc * (M_PI) / 180;
 		}
 	}
+}
+
+void Vector3::Javelin(double h, double s, double a, double t)
+{
+	double g = 9.81;
+
+	a *= (M_PI) / 180.0;
+
+	double vX = s * cos(a);
+	double vY = s * sin(a);
+
+	double posX = vX * t;
+	double posY = h + vY * t - g * (t * t) / 2.0;
+
+	Vector3 pos = { posX, posY, 0 };
+	Vector3 vel = { vX, vY - g * t , 0};
+	double angle = vel.Angle();
+
+	cprint::Print({ 5,5 }, L"X Pos: " + std::to_wstring(pos.x));
+	cprint::Print({ 5,6 }, L"Y Pos: " + std::to_wstring(pos.y));
+	cprint::Print({ 5,7 }, L"X Vel: " + std::to_wstring(vel.x));
+	cprint::Print({ 5,8 }, L"Y Vel: " + std::to_wstring(vel.y));
+	cprint::Print({ 5,9 }, L"Angle: " + std::to_wstring(angle));
+	std::cout << "\n";
 }
 
 bool Triangle::AnglePoint(Vector3 _p, bool print)

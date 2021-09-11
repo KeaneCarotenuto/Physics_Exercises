@@ -16,6 +16,7 @@ void DrawLine(Line _line, sf::Color _col);
 void DrawTriangle(Triangle _t);
 void DrawPoly(RegPolygon _p);
 
+void TestJavelin();
 void TestCannon();
 
 bool Within(double _val, double min, double max);
@@ -143,7 +144,7 @@ int main() {
 				}
 
 				if (newEvent.key.code == sf::Keyboard::Key::Num3) {
-
+					TestJavelin();
 				}
 
 				if (newEvent.key.code == sf::Keyboard::Key::Num4) {
@@ -440,6 +441,21 @@ void TestCannon() {
 	{
 		std::cout << "Cannot Reach.\n";
 	}
+
+	system("pause");
+
+	system("CLS");
+}
+
+void TestJavelin() {
+	system("CLS");
+
+	double h = InputDouble("Enter Start Height: ");
+	double s = InputDouble("Enter Velocity Mag: ");
+	double a = InputDouble("Enter Throw Angle: ");
+	double t = InputDouble("Enter Time: ");
+	
+	Vector3::Javelin(h, s, a, t);
 
 	system("pause");
 
