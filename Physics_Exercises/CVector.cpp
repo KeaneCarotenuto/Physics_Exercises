@@ -199,6 +199,22 @@ Vector3 Vector3::LineIntersectsLine(Vector3 l1p1, Vector3 l1p2, Vector3 l2p1, Ve
 	}
 }
 
+/// <summary>
+/// Finds the angle needed to hit a point with a cannon.
+/// Yes, I am aware that this method is not exact, and is probably not what you were looking for.
+/// But I honestly do NOT want to solve the following:
+/// "(l + (P.x - l * cos(theta))/(v*cos(theta)) * v) * sin(theta) - ((g * (P.x - l * cos(theta))/(v*cos(theta)) * (P.x - l * cos(theta))/(v*cos(theta))) / (2.0))"
+/// for theta....
+/// Seems like a huge amount of work for not much og a grade.
+/// So the following simply uses guess and check, and does it pretty well.
+/// </summary>
+/// <param name="l"></param>
+/// <param name="v"></param>
+/// <param name="P"></param>
+/// <param name="dp"></param>
+/// <param name="maxTries"></param>
+/// <param name="passed"></param>
+/// <returns></returns>
 double Vector3::FindCannonAngle(double l, double v, Vector3 P, int dp, int maxTries, bool* passed)
 {
 	double g = -9.81;
@@ -212,15 +228,17 @@ double Vector3::FindCannonAngle(double l, double v, Vector3 P, int dp, int maxTr
 
 	while (true) {
 		count++;
-		double t = (P.x - l * cos(theta))/(v*cos(theta));
+		double t = (abs(P.x) - l * cos(theta))/(v*cos(theta));
 		result = (l + t * v) * sin(theta) - ((g * t * t) / (2.0));
 
 		if (count >= maxTries) {
 			if (passed) *passed = false;
+			if (P.x < 0) return 180 + theta;
 			return theta;
 		}
 		if (abs(result - P.y) <= 1.0 / pow(10, dp + 2)) {
 			if (passed) *passed = true;
+			if (P.x < 0) return 180 + theta;
 			return theta;
 		}
 		else if (result < P.y) {
